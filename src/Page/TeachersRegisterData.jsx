@@ -8,6 +8,21 @@ import { MdDeleteForever } from "react-icons/md";
 import Swal from "sweetalert2";
 export default function TeachersRegisterData() {
   const [teacher, setTeacher] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1)
+    const studentsPerPage = 5
+
+  const indexOfLastStudent = currentPage * studentsPerPage
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage
+  const currentStudents = teacher.slice(indexOfFirstStudent, indexOfLastStudent)
+
+  const nextPage = () => {
+      setCurrentPage((prevPage) => prevPage + 1)
+  }
+
+  const prevPage = () => {
+      setCurrentPage((prevPage) => prevPage - 1)
+  }
+
   useEffect(() => {
     axios
       .get("/getTeacherData")
@@ -41,7 +56,7 @@ export default function TeachersRegisterData() {
   };
   return (
     <div>
-      <div className="title">Teachers Data</div>
+      <div className="title2">Teachers Data</div>
       <table className="tableData">
         <thead>
           <tr>
@@ -52,13 +67,13 @@ export default function TeachersRegisterData() {
             <th>Gender</th>
             <th>Phone No</th>
             <th>Cnic No</th>
-            <th>Provide Role & Send Password</th>
+            <th>Send Password</th>
             <th>Update</th>
             <th>Delete</th>
           </tr>
         </thead>
         <tbody>
-          {teacher.map((teach, index) => (
+          {currentStudents.map((teach, index) => (
             <tr key={index}>
               <td>{teach.name}</td>
               <td>{teach.qualification}</td>
@@ -101,6 +116,31 @@ export default function TeachersRegisterData() {
           ))}
         </tbody>
       </table>
+      <div className="pagination" style={buttonContainerStyle}>
+                <button onClick={prevPage} disabled={currentPage === 1} style={buttonStyle}>
+                    Prev
+                </button>
+                <span style={spanStyle}>{currentPage}</span>
+                <button onClick={nextPage} disabled={indexOfLastStudent >= teacher.length} style={buttonStyle}>
+                    Next
+                </button>
+            </div>
     </div>
   );
+}
+const buttonContainerStyle = {
+  display: 'flex',
+  justifyContent: 'flex-end' // Adjusted to align items to the end (right side)
+}
+
+const buttonStyle = {
+  width: '40px',
+  height: '30px',
+  backgroundColor: '#00073D',
+  color: 'white',
+  margin: '5px'
+}
+
+const spanStyle = {
+  margin: '0 10px'
 }

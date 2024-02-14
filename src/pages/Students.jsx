@@ -5,6 +5,10 @@ import Typography from '@mui/material/Typography'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
 
+import Sidebar from '../components/shared/Sidebar'
+import Header from '../components/shared/Header'
+
+
 import { TableHeading } from '../components/tableHeading'
 
 const StudentsPage = () => {
@@ -15,45 +19,56 @@ const StudentsPage = () => {
     const [status, setStatus] = useState([])
     const { user } = useContext(UserContext)
     const Navigate = useNavigate()
+    let [studentsgot, setStudentsgot] = useState(false);
+
+    const [supervisorstudents, setsupervisorstudents] = useState([]);
+
+    let get_supervisor_sudents = async () => {
+
+        try {
+            const response = await axios.get(`http://localhost:5000/get_supervisor_sudents/${user._id}`)
+            // console.log(response.data);
+            setStudentsData(response.data)
+            setStudentsgot(true);
+        } catch (error) {
+            // console.error(`Error fetching student data for ID ${id}:`, error)
+            return null // or handle the error in an appropriate way
+        }
+    }
 
     useEffect(() => {
+
+        if (!studentsgot) {
+            get_supervisor_sudents();
+        }
+
         let isMounted = true
 
-        const fetchStudentDataById = async (id) => {
-            try {
-                const response = await axios.get(`http://localhost:5000/getUser/${id}`)
-                return response.data
-            } catch (error) {
-                console.error(`Error fetching student data for ID ${id}:`, error)
-                return null // or handle the error in an appropriate way
-            }
-        }
+        // const fetchStudentDataById = async (id) => {
+        //     try {
+        //         const response = await axios.get(`http://localhost:5000/getUser/${id}`)
+        //         return response.data
+        //     } catch (error) {
+        //         console.error(`Error fetching student data for ID ${id}:`, error)
+        //         return null // or handle the error in an appropriate way
+        //     }
+        // }
 
-        const fetchAllStudentData = async () => {
-            const studentsData = await Promise.all(user?.students?.map((studentId) => fetchStudentDataById(studentId)))
+        // const fetchAllStudentData = async () => {
 
-            if (isMounted) {
-                setStudentsData((prevData) => [...prevData, ...studentsData])
-            }
-        }
+        //     const studentsData = await Promise.all(supervisorstudents?.map((supervisionrequests) => fetchStudentDataById(supervisionrequests.student_id)))
 
-        fetchAllStudentData()
+        //     if (isMounted) {
+        //         setStudentsData((prevData) => [...prevData, ...studentsData])
+        //     }
+        // }
+
+        // fetchAllStudentData()
 
         return () => {
             isMounted = false
         }
-    }, [user?.students])
-
-    // const getPdfById = async (pdf) => {
-    //     try {
-    //         const response = await axios.get(`http://localhost:5000/api/pdf/${pdf}`)
-    //         const status = response.data.status
-    //         setStatus([status])
-    //         console.log('Status', status)
-    //     } catch (error) {
-    //         console.error('Error fetching PDF:', error)
-    //     }
-    // }
+    }, [supervisorstudents])
 
     useEffect(() => {
         const removeDuplicates = (objectsArray) => {
@@ -70,7 +85,7 @@ const StudentsPage = () => {
 
         if (studentsData) {
             const result = removeDuplicates(studentsData)
-            console.log('Results:', result)
+            console.log(result)
             setStudents(result)
             console.log(students)
         }
@@ -108,105 +123,41 @@ const StudentsPage = () => {
                 sort: false
             }
         },
-
-        {
-            name: 'pdf',
-            label: ' PDF Uploaded',
-            options: {
-                sort: false,
-                customBodyRender: (value) => {
-                    let isAvailable
-                    if (value) {
-                        isAvailable = 'YES'
-                    } else {
-                        isAvailable = 'NO'
-                    }
-
-                    const statusStyle = {
-                        padding: '6px 4px', // Adding padding
-
-                        width: '100px',
-
-                        background: isAvailable ? '#00BA611A' : '#D9B91A1A',
-                        color: isAvailable ? '#00BA61' : '#D9B91A',
-                        borderRadius: '4px', // Adding border-radius for a box-like appearance
-                        textAlign: 'center' // Centering the text
-
-                        // Add other common styles here
-                    }
-
-                    return <div style={statusStyle}>{isAvailable}</div>
-                }
-            }
-        },
         // {
-        //     name: 'pdf',
-        //     label: 'Status', // Not allowing Async calls
+        //     name: 'pdf_id',
+        //     label: 'Visit',
         //     options: {
         //         sort: false,
+        //         filter: false,
         //         customBodyRender: (value) => {
-        //             const getStatus = () => {
-        //                 try {
-        //                     const pdfData = getPdfById(value)
-        //                     const isPdfAvailable = 'YES'
-        //                     const statusStyle = {
-        //                         padding: '6px 4px',
-        //                         width: '100px',
-        //                         background: isPdfAvailable ? '#00BA611A' : '#D9B91A1A',
-        //                         color: isPdfAvailable ? '#00BA61' : '#D9B91A',
-        //                         borderRadius: '4px',
-        //                         textAlign: 'center'
-        //                     }
-
-        //                     return <div style={statusStyle}>{status}</div>
-        //                 } catch (error) {
-        //                     console.error('Error fetching PDF status:', error)
-        //                     return <div>Error</div> // Handle the error in an appropriate way
-        //                 }
+        //             const statusStyle = {
+        //                 padding: '6px 4px',
+        //                 width: '100px',
+        //                 background: '#eeeeee',
+        //                 color: '#333333',
+        //                 borderRadius: '4px',
+        //                 textAlign: 'center'
         //             }
-
-        //             return getStatus(value)
+        //             let isAvailable
+        //             if (value) {
+        //                 isAvailable = 'YES'
+        //             } else {
+        //                 isAvailable = 'NO'
+        //             }
+        //             if (isAvailable) {
+        //                 return (
+        //                     <Typography
+        //                         className="details-text"
+        //                         onClick={() => Navigate(`/proposals/VisitSingleProposal/${value}`)}
+        //                         sx={{ cursor: 'pointer', fontFamily: 'Outfit', fontSize: '14px', ...statusStyle }}
+        //                     >
+        //                         VIEW
+        //                     </Typography>
+        //                 )
+        //             }
         //         }
         //     }
-        // },
-        {
-            name: 'pdf',
-
-            label: ' ',
-
-            options: {
-                sort: false,
-                filter: false,
-                customBodyRender: (value) => {
-                    const statusStyle = {
-                        padding: '6px 4px',
-                        width: '100px',
-                        background: '#eeeeee',
-                        color: '#333333',
-                        borderRadius: '4px',
-                        textAlign: 'center'
-                    }
-                    let isAvailable
-                    if (value) {
-                        isAvailable = 'YES'
-                    } else {
-                        isAvailable = 'NO'
-                    }
-                    if (isAvailable) {
-                        return (
-                            <Typography
-                                className="details-text"
-                                onClick={() => Navigate('/proposal', { state: { pdfId: value } })}
-                                sx={{ cursor: 'pointer', fontFamily: 'Outfit', fontSize: '14px', ...statusStyle }}
-                            >
-                                VIEW
-                            </Typography>
-                            //    </div>
-                        )
-                    }
-                }
-            }
-        }
+        // }
     ]
     const HeaderElements = () => {
         // return (
@@ -217,11 +168,6 @@ const StudentsPage = () => {
     }
 
     const options = {
-        // textLabels: {
-        //   body: {
-        //     noMatch: ''
-        //   }
-        // },
         customHeadRender: () => ({
             style: {
                 fontFamily: 'Outfit',
@@ -237,26 +183,30 @@ const StudentsPage = () => {
         download: false,
         viewColumns: false,
         tableLayout: 'fixed',
-        customTableBodyWidth: '700px',
-        tableBodyHeight: '500px',
+        customTableBodyWidth: 'auto',
+        tableBodyHeight: 'auto',
         selectableRowsHideCheckboxes: true,
         customToolbar: HeaderElements
     }
 
     return (
         <>
-            <TableHeading name={'Students'} />
-            {loading ? (
-                <div> ADDLoader</div>
-            ) : (
-                <>
-                    {userData ? (
-                        <MUIDataTable data={students} columns={columns} options={options} />
-                    ) : (
-                        <MUIDataTable data={[]} columns={columns} options={options} />
-                    )}
-                </>
-            )}
+            <div className="bg-neutral-100 overflow-hidden flex flex-row">
+                <Sidebar />
+                <div className="flex flex-col flex-1">
+                    <Header />
+                    <div className="flex-1 p-4 min-h-0 ">
+                        <TableHeading name={'Students'} />
+                        {loading ? (
+                            <div> ADDLoader</div>
+                        ) : (
+                            <>
+                                <MUIDataTable data={students} columns={columns} options={options} />
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
         </>
     )
 }

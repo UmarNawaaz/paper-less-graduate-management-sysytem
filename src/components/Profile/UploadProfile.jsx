@@ -1,28 +1,49 @@
 import React, { useState, useContext } from 'react'
-
+import axios from 'axios'
 import { Button, Typography } from '@mui/material'
 import { UserContext } from '../../context/User'
+import { toast } from 'react-toastify'
 
 const UploadProfile = () => {
     const { user, setUser } = useContext(UserContext)
     const [profileImg, setProfileImg] = useState('')
 
-    const handleImageChange = (event) => {
+    const handleImageChange = async (event) => {
         const selectedFile = event.target.files[0]
 
         if (selectedFile && selectedFile.size < 3145728) {
             const imageUrl = URL.createObjectURL(selectedFile)
             setProfileImg(imageUrl)
 
-            // Update the user context with the new profile image
             setUser((prevUser) => ({
                 ...prevUser,
                 profileImage: imageUrl
             }))
+
+            // Create a new FormData object
+            const formData = new FormData();
+
+            // Append the image file to the FormData object
+            formData.append('image', event.target.files[0]);
+
+            // Append other data to the FormData object
+            formData.append('user_type', user.role ? 'teacher' : 'student');
+            formData.append('_id', user._id);
+
+            // Send the FormData object to the server using Axios
+            await axios.post('/upload_user_image', formData).then((response) => {
+                toast.success("Updated profile picture");
+            }).catch((error) => {
+                // Handle errors
+                console.error('Error uploading image:', error);
+            });
+
+
         } else {
             console.error('Selected file is too large or no file selected.')
         }
     }
+
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '10vh' }}>

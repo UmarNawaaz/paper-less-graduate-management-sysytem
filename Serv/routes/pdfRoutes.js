@@ -4,6 +4,8 @@ const multer = require("multer");
 const path = require("path");
 const StudentData = require("../Models/studentRegister");
 const Pdf = require("../Models/Pdf");
+const student = require('../Models/studentRegister')
+const supervision = require('../Models/supervision')
 
 const router = express.Router();
 
@@ -18,7 +20,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({storage: storage});
+const upload = multer({ storage: storage });
 
 // Create a new PDF with file upload
 router.post("/pdf", upload.single("pdfFile"), async (req, res) => {
@@ -39,42 +41,64 @@ router.post("/pdf", upload.single("pdfFile"), async (req, res) => {
     res.json(savedPdf);
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 //Students Add a Pdf
 router.post("/Student-pdf", upload.single("pdfFile"), async (req, res) => {
   try {
-    console.log(req.body);
+
     const studentId = req.body.studentId;
 
-    if (!studentId) {
-      return res.status(400).json({error: "Student ID is required"});
+    if (!studentId && req.file) {
+      return res.status(400).json({ error: "Student ID is required" });
     }
+
+    console.log(req.body);
+
     const pdf = new Pdf({
-      pdfName: req.file.filename, // Use req.file.filename instead of filename
-      comments: req.body.comments || [],
+      pdfName: req.file.filename,
+      pdf_type: req.body.pdf_type ? req.body.pdf_type : 'proposal',
+      student_id: studentId,
+      teacher_id: req.body.supervisor_id
     });
 
-    if (req.file) {
-      pdf.file = req.file.path;
+    if (req.body.pdf_type != 'paper') {
+      student.findOneAndUpdate({ _id: studentId }, {
+        'proposal_status': 'pending'
+      })
     }
 
     const savedPdf = await pdf.save();
-    const student = await StudentData.findById(studentId);
-    if (!student) {
-      return res.status(404).json({error: "Student not found"});
-    }
 
-    student.pdf = savedPdf._id;
-    await student.save();
     res.json({
       message: "PDF created and associated with the student successfully",
-      pdf: savedPdf,
     });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+//update pdf file////////////////////////////////////////////////////////////////////////////////////
+router.post("/update_pdf_file", upload.single("pdfFile"), async (req, res) => {
+  try {
+    console.log(req.file.filename);
+    await Pdf.findOneAndUpdate({
+      _id: req.body.pdf_id
+    }, {
+      pdfName: req.file.filename,
+      status: 'modified'
+    });
+
+    res.status(200).json({
+      message: "Success",
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -85,7 +109,7 @@ router.put("/pdf/:id", upload.single("pdfFile"), async (req, res) => {
     const pdf = await Pdf.findById(pdfId);
 
     if (!pdf) {
-      return res.status(404).json({error: "PDF not found"});
+      return res.status(404).json({ error: "PDF not found" });
     }
 
     // Update PDF properties
@@ -100,23 +124,23 @@ router.put("/pdf/:id", upload.single("pdfFile"), async (req, res) => {
     res.json(updatedPdf);
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 // add Comments
 router.post("/pdf/:pdfId/comments", async (req, res) => {
   try {
-    const {pdfId} = req.params;
-    const {text} = req.body;
+    const { pdfId } = req.params;
+    const { text } = req.body;
 
     if (!text) {
-      return res.status(400).json({error: "Comment text is required"});
+      return res.status(400).json({ error: "Comment text is required" });
     }
 
     const pdf = await Pdf.findById(pdfId);
 
     if (!pdf) {
-      return res.status(404).json({error: "PDF not found"});
+      return res.status(404).json({ error: "PDF not found" });
     }
 
     // Add the new comment to the comments array
@@ -128,31 +152,31 @@ router.post("/pdf/:pdfId/comments", async (req, res) => {
     // Save the updated PDF
     const updatedPdf = await pdf.save();
 
-    res.json({message: "Comment added successfully", pdf: updatedPdf});
+    res.json({ message: "Comment added successfully", pdf: updatedPdf });
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 //update status
 router.put("/pdf/:pdfId/status", async (req, res) => {
   try {
-    const {pdfId} = req.params;
-    const {status} = req.body;
+    const { pdfId } = req.params;
+    const { status } = req.body;
 
     if (!status) {
-      return res.status(400).json({error: "Status is required"});
+      return res.status(400).json({ error: "Status is required" });
     }
 
     const pdf = await Pdf.findById(pdfId);
 
     if (!pdf) {
-      return res.status(404).json({error: "PDF not found"});
+      return res.status(404).json({ error: "PDF not found" });
     }
 
     if (!Pdf.schema.path("status").enumValues.includes(status)) {
-      return res.status(400).json({error: "Invalid status value"});
+      return res.status(400).json({ error: "Invalid status value" });
     }
     // Update the status of the PDF
     pdf.status = status;
@@ -160,25 +184,25 @@ router.put("/pdf/:pdfId/status", async (req, res) => {
     // Save the updated PDF
     const updatedPdf = await pdf.save();
 
-    res.json({message: "Status updated successfully", pdf: updatedPdf});
+    res.json({ message: "Status updated successfully", pdf: updatedPdf });
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 router.put("/pdf/:pdfId/feedback", async (req, res) => {
   try {
-    const {pdfId} = req.params;
-    const {feedbackText} = req.body;
+    const { pdfId } = req.params;
+    const { feedbackText } = req.body;
 
     if (!feedbackText) {
-      return res.status(400).json({error: "Feedback text is required"});
+      return res.status(400).json({ error: "Feedback text is required" });
     }
 
     const pdf = await Pdf.findById(pdfId);
 
     if (!pdf) {
-      return res.status(404).json({error: "PDF not found"});
+      return res.status(404).json({ error: "PDF not found" });
     }
 
     // Update the feedback in the PDF
@@ -190,10 +214,10 @@ router.put("/pdf/:pdfId/feedback", async (req, res) => {
     // Save the updated PDF
     const updatedPdf = await pdf.save();
 
-    res.json({message: "Feedback added successfully", pdf: updatedPdf});
+    res.json({ message: "Feedback added successfully", pdf: updatedPdf });
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -204,7 +228,7 @@ router.get("/pdfs", async (req, res) => {
     res.json(pdfs);
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 // Get pdf by ID
@@ -212,12 +236,60 @@ router.get("/pdf/:id", async (req, res) => {
   try {
     const pdf = await Pdf.findById(req.params.id);
     if (!pdf) {
-      return res.status(404).json({error: "PDF not found"});
+      return res.status(404).json({ error: "PDF not found" });
     }
     return res.json(pdf);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({error: "Internal Server Error"});
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+//get pdf by id
+
+router.post('/get_pdf_by_id', async (req, res) => {
+
+  try {
+
+    let data = await Pdf.find({
+      '_id': req.body._id
+    });
+    console.log(data);
+    res.json(data[0]);
+
+  } catch (err) {
+
+  }
+
+
+})
+
+
+router.post('/delete_pdf_by_id', async (req, res) => {
+
+
+  try {
+    await Pdf.findOneAndDelete({
+      '_id': req.body._id
+    });
+    res.status(200).json({ 'result': 'deleted' })
+  } catch (err) {
+    res.status(500).json({ 'result': 'error' });
+  }
+
+})
+
+router.post('/delete_pdf', async (req, res) => {
+
+  try {
+    result = await Pdf.findOneAndDelete({
+      '_id': req.body._id,
+    })
+    res.status(200).json({ 'result': 'deleted' })
+  } catch (err) {
+    res.status(500).json({ 'result': 'error' });
+  }
+
+})
 module.exports = router;

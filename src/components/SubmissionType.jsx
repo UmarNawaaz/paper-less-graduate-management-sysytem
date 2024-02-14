@@ -8,77 +8,45 @@ import { UserContext } from '../context/User'
 import axios from 'axios'
 
 export default function SubmissionTypePicker({ onSelectSubmissionType, onSuperViosrSelect }) {
-    const [submissionType, setSubmissionType] = useState('Proposal')
-    const { user, setUser } = useContext(UserContext)
+    const { user } = useContext(UserContext)
     const [selectedSupervisor, setSelectedSupervisor] = useState('')
     const [teachers, setTeachers] = useState([])
 
     useEffect(() => {
-        // Fetch teacher data when the component mounts
-
+        // Fetch teacher data when the component mounts 
         axios
             .get('http://localhost:5000/getTeacherData')
             .then((response) => {
+                // console.log(response.data)
                 const filteredTeachers = response.data.filter((teacher) => teacher.department === user.department)
+                // console.log(filteredTeachers);
                 setTeachers(filteredTeachers)
             })
             .catch((error) => {
                 console.error('Error fetching teacher data:', error)
             })
-        if (user?.supervisor) {
-            setSelectedSupervisor(user.supervisor)
-        }
     }, [user])
 
     const handleSuperVisorChange = (event) => {
         setSelectedSupervisor(event.target.value)
         onSuperViosrSelect(event.target.value)
 
-        setUser((prevUser) => {
-            return {
-                ...prevUser,
-                superVisor: event.target.value
-            }
-        })
-    }
-
-    const handleChange = (event) => {
-        const selectedType = event.target.value
-        setSubmissionType(selectedType)
-        onSelectSubmissionType(selectedType) // Callback function to send back the selected type
     }
 
     return (
         <>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                {!user.pdf ? (
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            width: '40%',
-                            margin: 'auto',
-                            margin: '40px 60px 20px',
-                            fontWeight: 'bold'
-                        }}
-                    >
-                        Select SuperVisor
-                    </Typography>
-                ) : null}
-                {!user.pdf ? (
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            width: '40%',
-                            margin: 'auto',
-                            margin: '40px 60px 20px',
-                            fontWeight: 'bold'
-                        }}
-                    >
-                        Select Submission Type
-                    </Typography>
-                ) : null}
-            </div>
 
+            <Typography
+                variant="h5"
+                sx={{
+                    width: '40%',
+                    margin: 'auto',
+                    margin: '40px 60px 20px',
+                    fontWeight: 'bold'
+                }}
+            >
+                Select SuperVisor
+            </Typography>
             <FormControl
                 style={{
                     margin: 'auto',
@@ -93,7 +61,6 @@ export default function SubmissionTypePicker({ onSelectSubmissionType, onSuperVi
                     label="Select Supervisor"
                     value={selectedSupervisor}
                     onChange={handleSuperVisorChange}
-                    disabled={user.supervisor ? true : false}
                 >
                     {teachers.map((teacher) => (
                         <MenuItem key={teacher._id} value={teacher._id}>
@@ -103,26 +70,6 @@ export default function SubmissionTypePicker({ onSelectSubmissionType, onSuperVi
                 </Select>
             </FormControl>
 
-            <FormControl
-                sx={{
-                    width: '40%',
-                    margin: 'auto',
-                    margin: '20px 60px 0px'
-                }}
-            >
-                <InputLabel id="demo-simple-select-helper-label">Submission Type</InputLabel>
-                <Select
-                    labelId="demo-simple-select-helper-label"
-                    id="demo-simple-select-helper"
-                    value={submissionType}
-                    label="Submission Type"
-                    onChange={handleChange}
-                    disabled={user.pdf ? true : false}
-                >
-                    <MenuItem value="Proposal">Proposal</MenuItem>
-                    <MenuItem value="Synopsis">Synopsis</MenuItem>
-                </Select>
-            </FormControl>
         </>
     )
 }

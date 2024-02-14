@@ -68,12 +68,12 @@ const TeacherRegistration = () => {
   };
 
   return (
-    <>
-      <div className="title">Submit Your Personal Details</div>
+    <div className="contain">
+      <div className="title1">Submit Your Personal Details</div>
       <div>
         <form onSubmit={TeacherRegister}>
-          <div className="studentForm">
-            <div className="inputFields">
+          <div className="studentForm1">
+            <div className="inputFields1">
               <label>Name:</label>
               <br />
               <input
@@ -88,7 +88,7 @@ const TeacherRegistration = () => {
               <br />
               <br />
             </div>
-            <div className="inputFields">
+            <div className="inputFields1">
               <label>CNIC:</label>
               <br />
               <input
@@ -103,7 +103,7 @@ const TeacherRegistration = () => {
               <br />
               <br />
             </div>
-            <div className="inputFields">
+            <div className="inputFields1">
               <label>Qualification:</label>
               <br></br>
               <select
@@ -121,7 +121,7 @@ const TeacherRegistration = () => {
                 <option value="Postdoctral">PostDoctral</option>
               </select>
             </div>
-            <div className="inputFields">
+            <div className="inputFields1">
               <label>Departments:</label>
               <br />
               <select
@@ -141,7 +141,7 @@ const TeacherRegistration = () => {
               </select>
             </div>
 
-            <div className="inputFields">
+            <div className="inputFields1">
               <label>Phone No:</label>
               <br />
               <input
@@ -156,7 +156,7 @@ const TeacherRegistration = () => {
               <br />
               <br />
             </div>
-            <div className="inputFields">
+            <div className="inputFields1">
               <label>Email:</label>
               <br />
               <input
@@ -169,7 +169,7 @@ const TeacherRegistration = () => {
               <br />
               <br />
             </div>
-            <div className="inputFields">
+            <div className="inputFields1">
               <label>Address:</label>
               <br />
               <input
@@ -182,7 +182,7 @@ const TeacherRegistration = () => {
               <br />
               <br />
             </div>
-            <div className="radioStyle">
+            <div className="radioStyle1">
               <label>Gender:</label>
               <br />
               <div>
@@ -213,12 +213,12 @@ const TeacherRegistration = () => {
               </div>
             </div>
           </div>
-          <button className="formBtn" type="submit">
+          <button className="formBtn1" type="submit">
             Submit
           </button>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 

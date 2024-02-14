@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const TeacherSchema = new Schema({
   name: String,
@@ -21,7 +21,10 @@ const TeacherSchema = new Schema({
   gender: String,
   password: String,
   role: String,
-  students: [{type: Schema.Types.ObjectId, ref: "StudentRegistration"}],
+  students: [{ type: Schema.Types.ObjectId, ref: "StudentRegistration" }],
+  image_name: {
+    type: String
+  }
 });
 
 const userModel = mongoose.model("teacherRegistration", TeacherSchema);

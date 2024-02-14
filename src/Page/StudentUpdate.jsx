@@ -1,9 +1,13 @@
-import { useState ,useEffect} from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { UserContext } from "../context/User";
 
 const StudentUpdate = () => {
+
+  let { user } = useContext(UserContext);
+
   const { id } = useParams();
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -13,6 +17,9 @@ const StudentUpdate = () => {
   const [email, setEmail] = useState("");
   const [department, setDepartment] = useState("");
   const [gender, setGender] = useState("");
+  const [commettis, setcommettis] = useState([]);
+  const [commetti, setcommetti] = useState('');
+  const [supervisor, setsupervisor] = useState(null);
 
   useEffect(() => {
     axios
@@ -26,14 +33,19 @@ const StudentUpdate = () => {
         setEmail(result.data.email);
         setDepartment(result.data.department);
         setGender(result.data.gender);
+        setsupervisor(result.data.supervisor);
+        setcommetti(result.data.commetti_id);
         // Ensure that the 'name' value is properly assigned
       })
       .catch((err) => console.log(err));
+
+    get_all_commetties();
+
   }, []);
   const SubmitData = (e) => {
     e.preventDefault();
     axios
-      .put("/updateStudentData/" + id, { name, cnic, phone, address, email, department, gender })
+      .put("/updateStudentData/" + id, { name, cnic, phone, address, email, department, gender, commetti })
       .then((result) => {
         console.log(result);
         Swal.fire({
@@ -45,6 +57,13 @@ const StudentUpdate = () => {
       })
       .catch((err) => console.log(err));
   };
+
+
+  let get_all_commetties = async () => {
+    const response = await axios.get("/get_all_commetties");
+    setcommettis(response.data);
+  }
+
   return (
     <>
       <div className="title">Update Student Data</div>
@@ -128,6 +147,7 @@ const StudentUpdate = () => {
               <br />
               <br />
             </div>
+
             <div className="inputFields">
               <label>Address:</label>
               <br />
@@ -141,6 +161,37 @@ const StudentUpdate = () => {
               <br />
               <br />
             </div>
+
+            {
+              supervisor != null &&
+              <div className="inputFields">
+                <label>Select Commetti</label>
+                <br />
+                <select
+                  name="dept"
+                  id="dept"
+                  value={commetti}
+                  onChange={(e) => setcommetti(e.target.value)}
+                  required
+                >
+                  <option value=""></option>
+                  {
+                    commettis.length > 0 &&
+                    <>
+                      {
+                        commettis.map((item) => {
+                          if (item.commetti_department == department) {
+                            return <option value={item._id}>{item.commetti_title}</option>
+                          }
+                        })
+                      }
+                    </>
+                  }
+                </select>
+              </div>
+            }
+
+
             <div className="radioStyle">
               <label>Gender:</label>
               <br />

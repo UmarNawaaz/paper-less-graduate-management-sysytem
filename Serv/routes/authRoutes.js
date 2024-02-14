@@ -38,24 +38,26 @@ router.options("/*", (req, res) => {
   res.sendStatus(200);
 });
 
-router.get("/", test);
+router.get("/", (req, res) => {
+  console.log('HOME');
+});
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/profile", getProfile);
 router.post("/studentRegistration", studentRegister);
 router.get("/haha", getStudent);
 router.get('/getUser/:id', getUser);
-router.put('/updateUser/:id',UpdateUser);
-router.post('/teacherRegister',TeacherRegistration);
-router.get('/getTeacherData',getTeacher);
-router.delete('/deleteTeacher/:id',TeacherDelete);
-router.delete('/deleteStudent/:id',StudentDelete);
+router.put('/updateUser/:id', UpdateUser);
+router.post('/teacherRegister', TeacherRegistration);
+router.get('/getTeacherData', getTeacher);
+router.delete('/deleteTeacher/:id', TeacherDelete);
+router.delete('/deleteStudent/:id', StudentDelete);
 
 router.get('/getUser1/:id', getUser1);
 router.put('/updateUser1/:id', UpdateUser1);
-router.put('/updateStudentData/:id',UpdateStudent);
-router.put('/updateTeacherData/:id',UpdateTeacher);
-router.post('/login1',LoginOtherUser);
+router.put('/updateStudentData/:id', UpdateStudent);
+router.put('/updateTeacherData/:id', UpdateTeacher);
+router.post('/login1', LoginOtherUser);
 
 
 module.exports = router;

@@ -9,20 +9,32 @@ import { UserContext } from '../context/User'
 import axios from 'axios'
 
 export default function DashboardStatsGrid() {
-    const { user } = useContext(UserContext)
+    const { user, setUser } = useContext(UserContext)
     const [pdf, setPdf] = useState(null)
     const [superVisor, setSuperVisor] = useState(null)
 
-    const role = user?.role
-    console.log('hello', superVisor?.name)
+    const role = user?.role ? user?.role : null;
+
+    const getuserbyid = async (id) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get_user_by_id/${id}/student`);
+            setUser(response.data[0]);
+        } catch (error) {
+            console.error(`Error fetching `, error)
+            return null
+        }
+    }
+
+    // useEffect(() => {
+    //     if (user) {
+    //         getuserbyid(user?._id)
+    //     }
+    // }, [])
 
     useEffect(() => {
-        // Check if the user has a PDF file and set it
-
         const fetchPdfContent = async (pdf) => {
             try {
                 const response = await axios.get(`http://localhost:5000/api/pdf/${pdf}`)
-
                 setPdf(response.data)
             } catch (error) {
                 console.error('Error fetching PDF:', error)
@@ -32,7 +44,6 @@ export default function DashboardStatsGrid() {
         const getSupervisor = async (id) => {
             try {
                 const response = await axios.get(`http://localhost:5000/getUser1/${id}`)
-
                 setSuperVisor(response.data)
             } catch (error) {
                 console.error('Error fetching PDF:', error)
@@ -45,21 +56,47 @@ export default function DashboardStatsGrid() {
         if (user?.supervisor) {
             getSupervisor(user.supervisor)
         }
+        if (role == 'Supervisor') {
+            get_students_count_with_proposals();
+        }
+        else if (role == 'CoordinateCommitte') {
+            get_students_count_with_papers();
+        }
     }, [user])
+
+    let [counts, setcounts] = useState(null);
+
+    let get_students_count_with_proposals = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get_students_count_with_proposals/${user._id}`)
+            // console.log(response.data);
+            setcounts(response.data);
+        } catch (error) {
+            // console.error(`Error fetching student data for ID ${id}:`, error)
+            return null // or handle the error in an appropriate way
+        }
+    }
+
+    let get_students_count_with_papers = async () => {
+        let response = await axios.post('/get_students_count_with_papers', {
+            '_id': user._id
+        });
+        setcounts(response.data);
+    }
 
     return (
         <>
             <div className="flex gap-4">
-                {role === 'Supervisor' ? (
+                {role === 'Supervisor' &&
                     <>
                         <BoxWrapper>
                             <div className="rounded-full h-12 w-12 flex items-center justify-center bg-sky-500">
                                 <PiStudentFill className="text-2xl text-white" />
                             </div>
                             <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Total Students</span>
+                                <span className="text-sm text-gray-500 font-light">My Supervision</span>
                                 <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">10</span>
+                                    <span className="text-sm text-gray-400">{counts?.mystudentscount}</span>
                                 </div>
                             </div>
                         </BoxWrapper>
@@ -69,9 +106,9 @@ export default function DashboardStatsGrid() {
                                 <MdOutlinePendingActions className="text-2xl text-white" />
                             </div>
                             <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Remaining Request</span>
+                                <span className="text-sm text-gray-500 font-light">Modified Request</span>
                                 <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">3</span>
+                                    <span className="text-sm text-gray-400">{counts?.modified_students}</span>
                                 </div>
                             </div>
                         </BoxWrapper>
@@ -80,9 +117,9 @@ export default function DashboardStatsGrid() {
                                 <MdOutlinePendingActions className="text-2xl text-white" />
                             </div>
                             <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Remaining Request</span>
+                                <span className="text-sm text-gray-500 font-light">Pending Request</span>
                                 <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">3</span>
+                                    <span className="text-sm text-gray-400">{counts?.pending_students}</span>
                                 </div>
                             </div>
                         </BoxWrapper>
@@ -94,12 +131,14 @@ export default function DashboardStatsGrid() {
                             <div className="pl-4">
                                 <span className="text-sm text-gray-500 font-light">Total Request Handled</span>
                                 <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">7</span>
+                                    <span className="text-sm text-gray-400">{counts?.pending_students + counts?.approved_students + counts?.rejected_students + counts?.tomodify_students + counts?.modified_students}</span>
                                 </div>
                             </div>
                         </BoxWrapper>
                     </>
-                ) : (
+                }
+
+                {role == null &&
                     <>
                         <BoxWrapper>
                             <div className="rounded-full h-12 w-12 flex items-center justify-center bg-sky-500">
@@ -108,8 +147,8 @@ export default function DashboardStatsGrid() {
                             <div className="pl-4">
                                 <span className="text-sm text-gray-500 font-light">Proposal Status</span>
                                 <div className="flex items-center">
-                                    {user?.pdf ? (
-                                        <span className="text-sm text-green-500">Submitted</span>
+                                    {user?.proposal_status ? (
+                                        <span className="text-sm text-green-500">{user?.proposal_status}</span>
                                     ) : (
                                         <span className="text-sm text-red-500">-</span>
                                     )}
@@ -149,7 +188,58 @@ export default function DashboardStatsGrid() {
                             </div>
                         </BoxWrapper>
                     </>
-                )}
+                }
+                {
+                    role == 'CoordinateCommitte' &&
+                    <>
+                        <BoxWrapper>
+                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-sky-500">
+                                <PiStudentFill className="text-2xl text-white" />
+                            </div>
+                            <div className="pl-4">
+                                <span className="text-sm text-gray-500 font-light">To modify</span>
+                                <div className="flex items-center">
+                                    <span className="text-sm text-gray-400">{counts?.tomodify_students}</span>
+                                </div>
+                            </div>
+                        </BoxWrapper>
+
+                        <BoxWrapper>
+                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
+                                <MdOutlinePendingActions className="text-2xl text-white" />
+                            </div>
+                            <div className="pl-4">
+                                <span className="text-sm text-gray-500 font-light">Modified Request</span>
+                                <div className="flex items-center">
+                                    <span className="text-sm text-gray-400">{counts?.modified_students}</span>
+                                </div>
+                            </div>
+                        </BoxWrapper>
+                        <BoxWrapper>
+                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
+                                <MdOutlinePendingActions className="text-2xl text-white" />
+                            </div>
+                            <div className="pl-4">
+                                <span className="text-sm text-gray-500 font-light">Pending Request</span>
+                                <div className="flex items-center">
+                                    <span className="text-sm text-gray-400">{counts?.pending_students}</span>
+                                </div>
+                            </div>
+                        </BoxWrapper>
+
+                        <BoxWrapper>
+                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-yellow-400">
+                                <IoPeople className="text-2xl text-white" />
+                            </div>
+                            <div className="pl-4">
+                                <span className="text-sm text-gray-500 font-light">Total Request Handled</span>
+                                <div className="flex items-center">
+                                    <span className="text-sm text-gray-400">{counts?.pending_students + counts?.approved_students + counts?.rejected_students + counts?.tomodify_students + counts?.modified_students}</span>
+                                </div>
+                            </div>
+                        </BoxWrapper>
+                    </>
+                }
             </div>
             {pdf?.feedback ? (
                 <BoxWrapper>

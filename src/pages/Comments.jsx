@@ -1,74 +1,125 @@
 import React, { useState, useEffect, useContext } from 'react' // ,{ useState }
-
 import MUIDataTable from 'mui-datatables'
 import Typography from '@mui/material/Typography'
-
 import { useNavigate } from 'react-router'
-
 import { UserContext } from '../context/User'
-
 import { TableHeading } from '../components/tableHeading'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 
+import Sidebar from '../components/shared/Sidebar'
+import Header from '../components/shared/Header'
+
+
 const CommentsPage = () => {
     const { user, setUser } = useContext(UserContext)
     const [comments, setComments] = useState([])
-
-    // const filteredList = mockData.filter((item) => item.department === user.department)
-
     const [userData, setUserData] = useState([])
     const navigate = useNavigate()
-
     const [loading, setLoading] = useState(false)
+
+
+    const get_comments = async () => {
+        try {
+            setLoading(true) // Set loading to true before the API call
+
+            const response = await axios.get(`http://localhost:5000/students/get_comments`)
+            // console.log(response.data)
+            setComments(response.data)
+
+        } catch (error) {
+            console.error('Error fetching PDF:', error)
+            toast.error('Failed to fetch PDF content')
+        } finally {
+            setLoading(false) // Set loading to false regardless of the API call result
+        }
+    }
+
+    const getuserbyid = async (id) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get_user_by_id/${id}/teacher`);
+            // console.log(response.data[0]._id);
+            return response.data[0]
+        } catch (error) {
+            console.error(`Error fetching `, error)
+            return null // or handle the error in an appropriate way
+        }
+    }
+
+    const get_pdf_data_id = async (id) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get_pdf_by_id/${id}`);
+            // console.log(response.data);
+            return response.data
+        } catch (error) {
+            console.error(`Error fetching `, error)
+            return null // or handle the error in an appropriate way
+        }
+    }
+
+    let [updated, setupdated] = useState(false);
+
+    const updatedata = async () => {
+        let _data = await Promise.all(comments?.map(async (comment, index) => {
+            let teacher = await getuserbyid(comment.teacher_id);
+            comment['teacher_name'] = teacher.name;
+            comment['teacher_type'] = teacher.role;
+            return comment;
+        }));
+
+        const new_data = await Promise.all(_data?.map(async (comment, index) => {
+            let pdf = await get_pdf_data_id(comment.pdf_id);
+            comment['document_name'] = pdf.pdfName;
+            return comment;
+        }));
+
+        // console.log(new_data);
+        setComments(new_data);
+        setupdated(true);
+    }
+
     useEffect(() => {
-        const fetchPdfContent = async () => {
-            try {
-                setLoading(true) // Set loading to true before the API call
-
-                const response = await axios.get(`http://localhost:5000/api/pdf/${user.pdf}`)
-                console.log('res', response)
-
-                // Update comments only if the API call is successful
-                setComments(response.data.comments)
-            } catch (error) {
-                console.error('Error fetching PDF:', error)
-                toast.error('Failed to fetch PDF content')
-            } finally {
-                setLoading(false) // Set loading to false regardless of the API call result
-            }
+        if (comments.length > 0 && !updated) {
+            updatedata();
+        } else if (!updated) {
+            get_comments();
         }
-
-        if (user?.pdf) {
-            fetchPdfContent()
-        }
-    }, [user])
-
-    console.log('Comments', comments)
+    }, [comments])
 
     const columns = [
-        // {
-        //     name: 'projectName',
-        //     label: 'Project Name',
-        //     options: {
-        //         sort: false,
-        //         filter: false
-        //     }
-        // },
-
         {
-            name: 'timestamp',
-            label: 'Comment Date',
+            name: 'teacher_name',
+            label: 'Teacher',
             options: {
                 sort: false,
                 customBodyRender: (value) => {
-                    const truncatedValue = value.substring(0, 10)
-
+                    const truncatedValue = value?.substring(0, 10)
                     return truncatedValue
                 }
             }
         },
-
+        {
+            name: 'teacher_type',
+            label: 'Role',
+            options: {
+                sort: false,
+                customBodyRender: (value) => {
+                    const truncatedValue = value?.substring(0, 10)
+                    return truncatedValue
+                }
+            }
+        },
+        {
+            name: 'document_name',
+            label: 'Document',
+            options: {
+                sort: false,
+                customBodyRender: (value) => {
+                    const truncatedValue = value?.substring(13)
+                    return truncatedValue?.length < value?.length ? truncatedValue + '...' : truncatedValue
+                }
+            }
+        },
         {
             name: 'text',
             label: 'Comment',
@@ -81,73 +132,9 @@ const CommentsPage = () => {
             }
         },
 
-        {
-            name: 'text',
-            // name: 'ViewProfile',
-            label: 'View All Comments',
-
-            options: {
-                sort: false,
-                filter: false,
-                customBodyRenderLite: (dataIndex, value) => {
-                    const statusStyle = {
-                        padding: '6px 4px',
-                        width: '100px',
-                        background: '#eeeeee',
-                        color: '#333333',
-                        borderRadius: '4px',
-                        textAlign: 'center'
-                    }
-                    const isAvailable = true
-                    if (isAvailable) {
-                        return (
-                            <Typography
-                                className="details-text"
-                                onClick={() => navigate('/view-comments')}
-                                sx={{ cursor: 'pointer', fontFamily: 'Outfit', ...statusStyle }}
-                            >
-                                Select
-                            </Typography>
-                        )
-                    }
-                }
-            }
-        },
-        {
-            name: 'text',
-            // name: 'ViewProfile',
-            label: 'Update File',
-
-            options: {
-                sort: false,
-                filter: false,
-                customBodyRenderLite: (dataIndex, value) => {
-                    const statusStyle = {
-                        padding: '6px 4px',
-                        width: '100px',
-                        background: '#eeeeee',
-                        color: '#333333',
-                        borderRadius: '4px',
-                        textAlign: 'center'
-                    }
-                    const isAvailable = true
-                    if (isAvailable) {
-                        return (
-                            <Typography
-                                className="details-text"
-                                onClick={() => navigate('/proposal', { state: { update: 'Update' } })}
-                                sx={{ cursor: 'pointer', fontFamily: 'Outfit', ...statusStyle }}
-                            >
-                                Select
-                            </Typography>
-                        )
-                    }
-                }
-            }
-        }
     ]
 
-    const HeaderElements = () => {}
+    const HeaderElements = () => { }
 
     const options = {
         customHeadRender: () => ({
@@ -165,37 +152,46 @@ const CommentsPage = () => {
         download: false,
         viewColumns: false,
         tableLayout: 'fixed',
-        customTableBodyWidth: '800px',
-        tableBodyHeight: '500px',
+        customTableBodyWidth: 'auto',
+        tableBodyHeight: 'auto',
         selectableRowsHideCheckboxes: true,
         customToolbar: HeaderElements
     }
 
     return (
         <>
-            <TableHeading name={'Comments'} />
-            {loading ? (
-                // <div>i am loading</div>
-                <div>Add Loader</div>
-            ) : (
-                <>
-                    {comments.length > 0 ? (
-                        <MUIDataTable
-                            // title={'Users list'}
-                            data={comments}
-                            columns={columns}
-                            options={options}
-                        />
-                    ) : (
-                        <MUIDataTable
-                            // title={'Users list'}
-                            data={[]}
-                            columns={columns}
-                            options={options}
-                        />
-                    )}
-                </>
-            )}
+            <div className="bg-neutral-100  overflow-hidden flex flex-row">
+                <Sidebar />
+                <div className="flex flex-col flex-1">
+                    <Header />
+                    <div className="flex-1 p-4 min-h-0 overflow-auto">
+                        <TableHeading name={'Comments'} />
+                        {loading ? (
+                            // <div>i am loading</div>
+                            <div>Add Loader</div>
+                        ) : (
+                            <>
+                                {comments.length > 0 ? (
+                                    <MUIDataTable
+                                        // title={'Users list'}
+                                        data={comments}
+                                        columns={columns}
+                                        options={options}
+                                    />
+                                ) : (
+                                    <MUIDataTable
+                                        // title={'Users list'}
+                                        data={[]}
+                                        columns={columns}
+                                        options={options}
+                                    />
+                                )}
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+
         </>
     )
 }

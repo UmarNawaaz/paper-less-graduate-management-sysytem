@@ -1,7 +1,12 @@
 const express = require("express");
 const router = new express.Router();
 const nodemailer = require("nodemailer");
-const cors = require("cors"); // Added cors
+const cors = require("cors");
+const StudentData = require("../Models/studentRegister");
+const TeacherData = require("../Models/TeacherRegister");
+const supervision = require('../Models/supervision');
+const comment = require('../Models/comment')
+const pdf = require('../Models/Pdf')
 
 router.use(
   cors({
@@ -11,11 +16,13 @@ router.use(
 );
 
 router.post("/emailsend", (req, res) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL,
         pass: process.env.PASSWORD,
@@ -34,11 +41,53 @@ router.post("/emailsend", (req, res) => {
         console.log("Error", error);
       } else {
         console.log("Success" + info.response);
-        res.status(201).json({status: 201, info});
+        res.status(201).json({ status: 201, info });
       }
     });
   } catch (error) {
-    res.status(401).json({status: 401, error});
+    res.status(401).json({ status: 401, error });
+  }
+});
+
+
+router.post('/get_user_by_id', async (req, res) => {
+  let data = '';
+
+  switch (req.body.type) {
+    case 'student':
+      data = StudentData.find({ '_id': req.body._id, });
+      console.log(data);
+      // res.json(data);
+      break;
+    case 'teacher':
+      data = TeacherData.find({ '_id': req.body._id, });
+      console.log(data);
+      // res.json(data);
+      break;
+  }
+
+
+})
+
+router.post('/get_comments_on_pdf', async (req, res) => {
+  try {
+    let data = await comment.find({
+      'pdf_id': req.body._id
+    });
+    res.status(200).json(data);
+  } catch (err) {
+
+  }
+})
+
+router.get('/get_document_to_forward_deen', async (req, res) => {
+  try {
+    let data = await pdf.find({
+      'status': 'forward to deen'
+    })
+    res.json(data);
+  } catch (err) {
+
   }
 });
 

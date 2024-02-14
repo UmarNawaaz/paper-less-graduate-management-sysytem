@@ -7,7 +7,6 @@ export const UserContext = createContext()
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState({})
-    const [updatePDf, setUpdatePDF] = useState({})
 
-    return <UserContext.Provider value={{ user, setUser, updatePDf, setUpdatePDF }}>{children}</UserContext.Provider>
+    return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>
 }

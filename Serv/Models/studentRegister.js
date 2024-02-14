@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const userSchema = new Schema({
   name: String,
@@ -19,16 +19,25 @@ const userSchema = new Schema({
   department: String,
   gender: String,
   password: String,
-  
+
   // image:String,
   supervisor: {
     type: Schema.Types.ObjectId,
     ref: "teacherRegistration", // Reference to the Teacher schema
   },
+  proposal_status: {
+    type: String
+  },
   pdf: {
     type: Schema.Types.ObjectId,
     ref: "Pdf",
   },
+  image_name: {
+    type: String
+  },
+  commetti_id: {
+    type: Schema.Types.ObjectId
+  }
 });
 
 const userModel = mongoose.model("StudentRegistration", userSchema);

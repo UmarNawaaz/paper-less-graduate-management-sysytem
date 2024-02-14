@@ -6,7 +6,6 @@ const selectTeacherForStudent = async (studentId, teacherId) => {
         const response = await axios.post(
             `http://localhost:5000/students/select-teacher/${studentId}/${teacherId}`,
             {},
-
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -14,7 +13,6 @@ const selectTeacherForStudent = async (studentId, teacherId) => {
                 }
             }
         )
-
         if (response.status === 200) {
             return { success: true, data: response.data }
         } else {

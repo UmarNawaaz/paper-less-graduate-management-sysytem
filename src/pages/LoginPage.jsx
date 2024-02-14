@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../context/User'
+
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { FormControl, InputLabel, Select, MenuItem, TextField } from '@mui/material'
 import { toast } from 'react-toastify'
-import Swal from "sweetalert2";
-import {Link} from 'react-router-dom';
-import Register from './Register';
+import Swal from 'sweetalert2'
+import { Link } from 'react-router-dom'
+import Register from './Register'
 function LoginPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -22,156 +23,185 @@ function LoginPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
-        // Validate form data
         if (!email || !password) {
-            toast.error('Please provide both email and password.')
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please provide both email and password.'
+            })
             return
         }
-        if(email === "umarali031158@gmail.com" && password === "@Umarali104"){
-            navigate("/admin/admin/studentRegisterData");
+
+        const baseAxios = axios.create({
+            baseURL: 'http://localhost:5000'
+        })
+
+        try {
+            let loginData = { email, password }
+
+            if (email === 'umarali031158@gmail.com' && password === '@Umarali104') {
+                navigate('/admin/admin/studentRegisterData')
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Successfully',
+                    text: 'Welcome! Muhammad Umar',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+            } else {
+                if (role) {
+                    loginData = { ...loginData, role }
+                }
+
+                const response = await baseAxios.post(role ? '/login1' : '/login', loginData)
+
+                if (response?.data?.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.data.error
+                    })
+                } else {
+                    setUser(response.data)
+                    // toast.success('Login successful');
+                    // Swal.fire({
+                    //     icon: 'success',
+                    //     title: 'Sucessfully',
+                    //     text: 'Login Successfully'
+                    // })
+                    navigate('/dashboard')
+                    // console.log('Login successful:', response.data)
+                }
+            }
+        } catch (error) {
             Swal.fire({
-              icon: "success",
-              title: "Login  Successfully",
-              text: "Welcome! Muhammad Umar",
-              showConfirmButton: false,
-              timer: 3000, // Adjust the duration the success message stays visible (in milliseconds)
-            });
-        } 
-        if (!role) {
-            try {
-                const loginData = {
-                    email: email,
-                    password: password
-                }
-
-                const response = await axios.post('http://localhost:5000/login', loginData)
-
-                if (response?.data?.error) {
-                    toast.error(response?.data?.error)
-                } else {
-                    // Assuming response.data contains user information
-                    setUser(response.data)
-                    toast.success('Login successful')
-                    navigate('/')
-                    console.log('Login successful:', response.data)
-                }
-            } catch (error) {
-                toast.error(`Something Went Wrong `)
-            }
-        } else {
-            try {
-                const loginData = {
-                    email: email,
-                    password: password,
-                    role: role
-                }
-
-                const response = await axios.post('http://localhost:5000/login1', loginData)
-
-                if (response?.data?.error) {
-                    toast.error(response?.data?.error)
-                } else {
-                    // Assuming response.data contains user information
-                    setUser(response.data)
-                    toast.success('Login successful')
-                    navigate('/')
-                    console.log('Login successful:', response.data)
-                }
-            } catch (error) {
-                toast.error(`Something Went Wrong `)
-            }
+                icon: 'error',
+                title: 'Error',
+                text: 'Some Thing Went Wrong'
+            })
         }
     }
 
     return (
-        <section className="h-screen flex flex-col md:flex-row justify-center space-y-10 md:space-y-0 md:space-x-16 items-center my-2 mx-5 md:mx-0 md:my-0">
-            <div className="md:w-1/3 max-w-sm">
-                <img
-                    src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
-                    alt="Sample image"
-                />
-            </div>
-            <div className="md:w-1/3 max-w-sm">
-                <div className="">
-                    <p className="mx-4 text-2xl mb-4 text-center font-semibold text-blue-500">SIGN IN</p>
-                </div>
+        <div className="bg-gradient">
+            <p
+                className="mx-4 text-4xl mb-4 text-center font-extrabold text-white"
+                style={{
+                    fontSize: '50px',
+                    fontFamily: 'Montserrat, sans-serif', // Change to a professional font
+                    textTransform: 'uppercase', // Uppercase for a more bold look
+                    letterSpacing: '5px',
+                    borderRadius: '10px',
+                    padding: '10px',
+                    position: 'absolute',
+                    top: '20px',
+                    left: '20px',
+                    background: 'linear-gradient(to right, #3498db, #2c3e50)', // Gradient background
+                    WebkitBackgroundClip: 'text', // Clip text to background
+                    color: 'transparent' // Make text transparent
+                }}
+            >
+                PGMS
+            </p>
 
-                <TextField
-                    label="Email"
-                    variant="outlined"
-                    value={email}
-                    onChange={handleEmailChange}
-                    fullWidth
-                    autoComplete="off"
-                    inputProps={{ style: { fontSize: 15 } }}
-                    InputLabelProps={{ style: { fontSize: 15, color: 'GrayText' } }}
-                />
-                <TextField
-                    style={{ marginTop: '20px' }}
-                    label="Password"
-                    variant="outlined"
-                    value={password}
-                    type="password"
-                    onChange={handlePasswordChange}
-                    fullWidth
-                    autoComplete="off"
-                    inputProps={{ style: { fontSize: 15 } }}
-                    InputLabelProps={{ style: { fontSize: 15, color: 'GrayText' } }}
-                />
+            <section className="h-screen flex flex-col md:flex-row justify-center space-y-10 md:space-y-0 md:space-x-16 items-center my-2 mx-5 md:mx-0 md:my-0">
+                <div className="md:w-1/3 max-w-sm">{/* Removed the image */}</div>
+                <div className="md:w-1/3 max-w-sm">
+                    <div className="mb-4">
+                        <p className="mx-4 text-2xl mb-4 text-center font-semibold text-blue-500">LOGIN</p>
+                    </div>
 
-                <FormControl fullWidth style={{ marginTop: '20px' }}>
-                    <InputLabel id="role-label">Role</InputLabel>
-                    <Select labelId="role-label" id="role" value={role} label="Rolw" onChange={handleRoleChange}>
-                        <MenuItem value="Supervisor">Supervisor</MenuItem>
-                        <MenuItem value="Committee">Committee</MenuItem>
-                        <MenuItem value="DAC">DAC</MenuItem>
-                        <MenuItem value="Deen">Deen</MenuItem>
-                        <MenuItem value="External Examiner">External Examiner</MenuItem>
-                    </Select>
-                </FormControl>
-                <div className="mt-4 flex justify-between font-semibold text-sm">
-                    <label className="flex text-slate-500 hover:text-slate-600 cursor-pointer">
-                        <input
-                            className="mr-1"
-                            type="checkbox"
-                            checked={rememberMe}
-                            onChange={handleRememberMeChange}
-                        />
-                        <span>Remember Me</span>
-                    </label>
-                    <a className="text-blue-600 hover:text-blue-700 hover:underline hover:underline-offset-4" href="#">
-                        Forgot Password?
-                    </a>
+                    <TextField
+                        label="Email"
+                        variant="outlined"
+                        value={email}
+                        onChange={handleEmailChange}
+                        fullWidth
+                        autoComplete="off"
+                        inputProps={{ style: { fontSize: 16, color: 'black' } }}
+                        InputLabelProps={{ style: { fontSize: 16, color: '#2c3e50' } }}
+                    />
+                    <TextField
+                        style={{ marginTop: '20px' }}
+                        label="Password"
+                        variant="outlined"
+                        value={password}
+                        type="password"
+                        onChange={handlePasswordChange}
+                        fullWidth
+                        autoComplete="off"
+                        inputProps={{ style: { fontSize: 16, color: 'black' } }}
+                        InputLabelProps={{ style: { fontSize: 16, color: '#2c3e50' } }}
+                    />
+
+                    <FormControl fullWidth style={{ marginTop: '20px' }}>
+                        <InputLabel id="role-label" style={{ fontSize: 16, color: '#2c3e50' }}>
+                            Role
+                        </InputLabel>
+                        <Select
+                            style={{ color: 'black' }}
+                            labelId="role-label"
+                            id="role"
+                            value={role}
+                            label="Role"
+                            onChange={handleRoleChange}
+                        >
+                            <MenuItem value="Supervisor">Supervisor</MenuItem>
+                            <MenuItem value="CoordinateCommitte">Committee</MenuItem>
+                            <MenuItem value="DAC">DAC</MenuItem>
+                            <MenuItem value="Deen">Deen</MenuItem>
+                            <MenuItem value="External Examiner">External Examiner</MenuItem>
+                        </Select>
+                        <p
+                            style={{
+                                fontSize: '15px',
+                                color: 'black',
+                                marginTop: '4px'
+                            }}
+                        >
+                            <span style={{ color: 'red', fontSize: '20px', marginRight: '2px', fontWeight: 'bold' }}>
+                                *
+                            </span>
+                            Optional for students
+                        </p>
+                    </FormControl>
+
+                    <div className="text-center md:text-left">
+                        <button
+                            className="mt-4 px-6 py-3 text-white uppercase rounded text-lg font-semibold transition duration-300 ease-in-out"
+                            type="submit"
+                            onClick={handleSubmit}
+                            style={{
+                                width: '100%',
+                                background: 'linear-gradient(to right, #3498db, #2c3e50)' // Adjust the colors as needed
+                            }}
+                        >
+                            Login
+                        </button>
+                    </div>
+
+                    <div className="mt-4 font-semibold text-sm text-gray-600 text-center md:text-left">
+                        <p style={{ color: 'black' }}>Don't have an account?</p>
+                        <Link
+                            className="text-red-600 hover:underline hover:underline-offset-4"
+                            to="/studentRegistration"
+                            style={{ letterSpacing: '1px' }}
+                        >
+                            Register as a Student
+                        </Link>
+                        <br />
+                        <Link
+                            className="text-red-600 hover:underline hover:underline-offset-4"
+                            to="/teacherRegistration"
+                            style={{ letterSpacing: '1px' }}
+                        >
+                            Register as a Teacher
+                        </Link>
+                        <br />
+                    </div>
                 </div>
-                <div className="text-center md:text-left">
-                    <button
-                        className="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white uppercase rounded text-xs tracking-wider"
-                        type="submit"
-                        onClick={handleSubmit}
-                    >
-                        Login
-                    </button>
-                </div>
-                <div className="mt-4 font-semibold text-sm text-slate-500 text-center md:text-left">
-                    <p>Don't have an account?</p>
-                    <Link
-                    className="text-red-600 hover:underline hover:underline-offset-4"
-                    to="/studentRegistration"
-                        // style={{ fontSize: "25px", color: "white" }}
-                      >
-                        Student Register
-                      </Link><br></br>
-                      <Link
-                    className="text-red-600 hover:underline hover:underline-offset-4"
-                    to="/teacherRegistration"
-                        // style={{ fontSize: "25px", color: "white" }}
-                      >
-                        Teacher  Register
-                      </Link><br></br>
-                </div>
-            </div>
-        </section>
+            </section>
+        </div>
     )
 }
 

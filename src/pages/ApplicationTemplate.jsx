@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Paper, Typography, List, ListItem, Grid } from '@mui/material'
-
+import Sidebar from '../components/shared/Sidebar'
+import Header from '../components/shared/Header'
 const TemplatePage = () => {
     const templates = [
         {
@@ -41,53 +42,62 @@ const TemplatePage = () => {
     }
 
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <Paper
-                    sx={{
-                        padding: 2,
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                >
-                    <Typography variant="h5" sx={{ marginBottom: 2 }}>
-                        Templates
-                    </Typography>
-                    <List>
-                        {templates.map((template, index) => (
-                            <ListItem
-                                key={index}
+        <div className="bg-neutral-100 h-screen w-screen overflow-hidden flex flex-row">
+            <Sidebar />
+            <div className="flex flex-col flex-1">
+                <Header />
+                <div className="flex-1 p-4 min-h-0 overflow-auto">
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Paper
                                 sx={{
+                                    padding: 2,
                                     display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    paddingY: 1
+                                    flexDirection: 'column'
                                 }}
                             >
-                                <Typography>{template.template}</Typography>
-                                <div>
-                                    <Button
-                                        onClick={() => handleOpenTemplate(template.value)}
-                                        variant="contained"
-                                        color="primary"
-                                    >
-                                        Open
-                                    </Button>
-                                    <Button
-                                        onClick={() => handleDownloadTemplate(template.value)}
-                                        variant="outlined"
-                                        color="primary"
-                                        sx={{ marginLeft: 1 }}
-                                    >
-                                        Download
-                                    </Button>
-                                </div>
-                            </ListItem>
-                        ))}
-                    </List>
-                </Paper>
-            </Grid>
-        </Grid>
+                                <Typography variant="h5" sx={{ marginBottom: 2 }}>
+                                    Templates
+                                </Typography>
+                                <List>
+                                    {templates.map((template, index) => (
+                                        <ListItem
+                                            key={index}
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                paddingY: 1
+                                            }}
+                                        >
+                                            <Typography>{template.template}</Typography>
+                                            <div>
+                                                <Button
+                                                    onClick={() => handleOpenTemplate(template.value)}
+                                                    variant="contained"
+                                                    color="primary"
+                                                >
+                                                    Open
+                                                </Button>
+                                                <Button
+                                                    onClick={() => handleDownloadTemplate(template.value)}
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    sx={{ marginLeft: 1 }}
+                                                >
+                                                    Download
+                                                </Button>
+                                            </div>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                </div>
+            </div>
+        </div>
+
     )
 }
 

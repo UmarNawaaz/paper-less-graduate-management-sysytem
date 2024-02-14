@@ -16,7 +16,7 @@ import { BsCartCheck } from "react-icons/bs";
 import { GrUpdate } from "react-icons/gr";
 import { TbPassword } from "react-icons/tb";
 import { useState } from "react";
-import {IoDocumentsSharp} from 'react-icons/io5'
+import { IoDocumentsSharp } from 'react-icons/io5'
 import { AnimatePresence, motion } from "framer-motion";
 import SidebarMenu from "./SidebarMenu";
 const routes = [
@@ -28,17 +28,27 @@ const routes = [
   {
     path: "admin/studentRegisterData",
     name: "Students Data",
-    icon: <PiStudentBold  />,
+    icon: <PiStudentBold />,
   },
   {
     path: "admin/teacherRegisterData",
     name: "Teachers Data",
     icon: <FaChalkboardTeacher />,
   },
-  
+
   {
     path: "admin/send-documents",
     name: "Forward Documents",
+    icon: <IoDocumentsSharp />,
+  },
+  {
+    path: "admin/Viewcommetties",
+    name: "Commetties",
+    icon: <IoDocumentsSharp />,
+  },
+  {
+    path: "admin/Viewdac",
+    name: "DAC",
     icon: <IoDocumentsSharp />,
   },
   {

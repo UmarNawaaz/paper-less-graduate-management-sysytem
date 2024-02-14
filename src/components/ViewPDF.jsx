@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect,useRef } from 'react'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import '@react-pdf-viewer/core/lib/styles/index.css'
@@ -7,7 +7,6 @@ import { Typography } from '@mui/material'
 import SubmissionTypePicker from './SubmissionType'
 import { UserContext } from '../context/User'
 import { toast } from 'react-toastify'
-
 import { useNavigate } from 'react-router'
 import { uploadStudentPDF } from '../apis/UploadStudentPdf'
 import { selectTeacherForStudent } from '../apis/SelectSuperVisor'
@@ -17,6 +16,7 @@ import axios from 'axios'
 import { updateStudentPDF } from '../apis/Updatepdf'
 
 const ViewPDF = (pdfName, { update }) => {
+
     const [getId, setGetId] = useState()
     const [uploadPDFName, setUplaodPDFName] = useState(null)
     const [superVisor, setSuperVisor] = useState(null)
@@ -28,11 +28,7 @@ const ViewPDF = (pdfName, { update }) => {
 
     const baseURL = 'http://localhost:5000/files/' //store this in ENV
     const navigate = useNavigate()
-
-    useEffect(() => {
-        // setGetId(pdfId)
-        console.log('refresh')
-    }, [updatePDf])
+    let pdfref = useRef(null);
 
     useEffect(() => {
         // Check if the user has a PDF file and set it
@@ -43,11 +39,6 @@ const ViewPDF = (pdfName, { update }) => {
                 const fullURL = baseURL + response.data.pdfName
 
                 setViewPdf(fullURL)
-                //   setPdfContent(response.data);
-
-                // If the response is a URL or file, you might need to handle it differently
-                // For example, if it's a URL, you could use it in an iframe to display the PDF:
-                // setPdfContent(<iframe title="PDF Viewer" src={response.data} width="100%" height="500px" />);
             } catch (error) {
                 console.error('Error fetching PDF:', error)
             }
@@ -142,57 +133,62 @@ const ViewPDF = (pdfName, { update }) => {
         }
     }
     const handleSubmission = async () => {
-        if (updatePDf === 'Update') {
-            setUpdatePDF(null)
-            if (user._id && user.pdf) {
-                // Upload PDF file for the student
-                const result = await updateStudentPDF(uploadPDFName, user.pdf)
 
-                if (result.success) {
-                    toast.success('File Uploaded')
-                    fetchUser()
+        if (pdfFile) {
+            // const result = await uploadStudentPDF(uploadPDFName, user._id, superVisor)
+
+            // if (result.success) {
+            //     // toast.success('File Uploaded')
+
+            //     if (user._id && superVisor) {
+            //         // Select a teacher for the student
+            //         const result = await selectTeacherForStudent(user._id, superVisor)
+
+            //         if (result.success) {
+            //             toast.success('Supervisor Selected')
+            //             fetchUser()
+            //         } else {
+            //             console.error('Request Failed', result.error)
+            //         }
+
+            //     } else {
+            //         // Handle the case where user ID or supervisor is missing
+            //         toast.error('User ID or Supervisor information missing')
+            //     }
+            //     fetchUser()
+
+            // } else {
+            //     console.error('Failed to upload PDF:', result.error)
+            //     toast.error('File Upload Failed')
+            // }
+            const formData = new FormData()
+            formData.append('pdfFile', pdfref.current.files[0])
+            formData.append('studentId', user._id)
+            formData.append('supervisor_id',superVisor)
+            formData.append('pdf_type', 'proposal');
+
+            try {
+                const response = await axios.post('http://localhost:5000/api/Student-pdf', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                if (response.status === 200) {
+                    console.log(response.data)
+                    navigate('/proposal')
                 } else {
-                    console.error('Failed to upload PDF:', result.error)
-                    toast.error('File Upload Failed')
+                    console.log(response.data)
                 }
-            } else {
-                // Handle the case where user ID or supervisor is missing
-                toast.error('User ID or Supervisor information missing')
+            } catch (error) {
+                return { success: false, error: error.message }
             }
+
+
         } else {
-            // Check if user ID exists and superVisor is defined
-            if (user._id && superVisor) {
-                // Select a teacher for the student
-                const result = await selectTeacherForStudent(user._id, superVisor)
-
-                if (result.success) {
-                    toast.success('Supervisor Selected')
-                    fetchUser()
-                } else {
-                    console.error('Request Failed', result.error)
-                }
-            } else {
-                // Handle the case where user ID or supervisor is missing
-                toast.error('User ID or Supervisor information missing')
-            }
-
-            // Check if a PDF file is selected
-            if (pdfFile) {
-                // Upload the selected PDF file for the student
-                const result = await uploadStudentPDF(uploadPDFName, user._id)
-
-                if (result.success) {
-                    toast.success('File Uploaded')
-                    fetchUser()
-                } else {
-                    console.error('Failed to upload PDF:', result.error)
-                    toast.error('File Upload Failed')
-                }
-            } else {
-                // Handle the case where no PDF file is selected
-                toast.error('File Not Selected')
-            }
+            // Handle the case where no PDF file is selected
+            toast.error('File Not Selected')
         }
+
     }
 
     const handleClick = (action) => {
@@ -267,6 +263,7 @@ const ViewPDF = (pdfName, { update }) => {
                                     id="pdfFileInput"
                                     style={{ display: 'none' }}
                                     onChange={handleFileChange}
+                                    ref={pdfref}
                                 />
                                 <button
                                     type="button"

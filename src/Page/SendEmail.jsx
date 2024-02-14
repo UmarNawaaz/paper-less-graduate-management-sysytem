@@ -150,7 +150,7 @@ export default function SendEmail() {
                         type="submit"
                         onClick={(e) => {
                             SubmitData(e)
-                            SendEmail(e)
+                           SendEmail(e)
                         }}
                         className="formBtn"
                         disabled={loading}

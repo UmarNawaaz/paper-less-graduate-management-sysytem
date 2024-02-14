@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { Children } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Header from './Header'
+import Dashboard from '../../pages/Dashboard'
 
-export default function Layout() {
+export default function Layout({ children }) {
     return (
         <div className="bg-neutral-100 h-screen w-screen overflow-hidden flex flex-row">
             <Sidebar />

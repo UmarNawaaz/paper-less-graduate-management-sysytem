@@ -65,7 +65,7 @@ const StudentRegisterData = () => {
 
     return (
         <div>
-            <div className="title">Students Data</div>
+            <div className="title2">Students Data</div>
             <table className="tableData">
                 <thead>
                     <tr>

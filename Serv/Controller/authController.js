@@ -207,7 +207,7 @@ const TeacherRegistration = async (req, res) => {
 //get Teacher Data
 const getTeacher = (req, res) => {
   try {
-    TeacherData.find({ 'role': 'Supervisor' })
+    TeacherData.find()
       .then(user => res.json(user))
       .catch(err => console.log(err));
   } catch (err) {

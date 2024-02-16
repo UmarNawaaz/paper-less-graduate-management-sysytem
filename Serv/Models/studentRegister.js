@@ -37,7 +37,10 @@ const userSchema = new Schema({
   },
   commetti_id: {
     type: Schema.Types.ObjectId
-  }
+  },
+  commetti_acceptence: String,
+  dac_acceptence: String,
+  deen_acceptence: String
 });
 
 const userModel = mongoose.model("StudentRegistration", userSchema);

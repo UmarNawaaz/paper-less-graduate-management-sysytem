@@ -69,7 +69,25 @@ function ViewPapers() {
             label: 'Name',
             options: {
                 sort: false,
-                filter: false
+                filter: false,
+                customBodyRender: (value) => {
+
+                    let isAvailable
+                    if (value) {
+                        isAvailable = 'YES'
+                    } else {
+                        isAvailable = 'NO'
+                    }
+                    if (isAvailable) {
+                        return (
+                            <Typography
+                                className="details-text"
+                            >
+                                {value?.substring(13)}
+                            </Typography>
+                        )
+                    }
+                }
             }
         },
         {

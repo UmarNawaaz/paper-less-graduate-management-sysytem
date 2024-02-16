@@ -240,6 +240,7 @@ exports.approve_paper = async (req, res) => {
             'status': 'approved'
         })
 
+
         let dacdata = await dac.find({
             'dac_head': req.body.teacher_id
         })
@@ -256,6 +257,13 @@ exports.approve_paper = async (req, res) => {
                 'teacher_id': req.body.teacher_id,
                 'pdf_type': 'paper'
             }).save();
+
+            await StudentData.findOneAndUpdate({
+                '_id': pdf_data[0].student_id
+            }, {
+                'dac_acceptence': 'accepted'
+            })
+
         }
 
         res.json({ 'result': "approved" });

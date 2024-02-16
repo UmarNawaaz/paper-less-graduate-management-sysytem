@@ -96,6 +96,12 @@ router.post('/forward_to_dac', async (req, res) => {
             }).save();
         })
 
+        await studentData.findOneAndUpdate({
+            '_id': pdfdata[0].student_id
+        }, {
+            'commetti_acceptence': 'accepted'
+        })
+
         res.status(200).json({ 'status': "forwarded" })
 
     } catch (err) {

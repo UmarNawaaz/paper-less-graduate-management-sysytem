@@ -13,6 +13,7 @@ export default function Progress() {
 
     const role = user?.role
 
+
     return (
         <div className="flex gap-4">
             <>
@@ -21,9 +22,14 @@ export default function Progress() {
                         <SiGoogleclassroom className="text-2xl text-white" />
                     </div>
                     <div className="pl-4">
-                        <span className="text-sm text-gray-500 font-light">Supervisor committee Acceptance</span>
+                        <span className="text-sm text-gray-500 font-light">Committee Acceptance</span>
                         <div className="flex items-center">
-                            <span className="text-sm text-green-500">Accepted</span>
+                            {
+                                user?.commetti_acceptence == 'accepted' ?
+                                    <span className="text-sm text-green-500">Accepted</span> :
+                                    <span className="text-sm text-gray-500">Pending</span>
+                            }
+
                         </div>
                     </div>
                 </BoxWrapper>
@@ -35,7 +41,11 @@ export default function Progress() {
                     <div className="pl-4">
                         <span className="text-sm text-gray-500 font-light">DAC Members Acceptance</span>
                         <div className="flex items-center">
-                            <span className="text-sm text-gray-300">Pending</span>
+                            {
+                                user?.dac_acceptence == 'accepted' ?
+                                    <span className="text-sm text-green-500">Accepted</span> :
+                                    <span className="text-sm text-gray-500">Pending</span>
+                            }
                         </div>
                     </div>
                 </BoxWrapper>
@@ -46,7 +56,11 @@ export default function Progress() {
                     <div className="pl-4">
                         <span className="text-sm text-gray-500 font-light">Dean Acceptance</span>
                         <div className="flex items-center">
-                            <span className="text-sm text-gray-300">Pending</span>
+                            {
+                                user?.deen_acceptence == 'accepted' ?
+                                    <span className="text-sm text-green-500">Accepted</span> :
+                                    <span className="text-sm text-gray-500">Pending</span>
+                            }
                         </div>
                     </div>
                 </BoxWrapper>

@@ -122,7 +122,7 @@ const MyProposal = () => {
         },
         {
             name: '_id',
-            label: 'Action',
+            label: 'View',
             options: {
                 sort: false,
                 filter: false,
@@ -161,7 +161,7 @@ const MyProposal = () => {
         ,
         {
             name: '_id',
-            label: 'Action',
+            label: 'Delete',
             options: {
                 sort: false,
                 filter: false,
@@ -200,7 +200,7 @@ const MyProposal = () => {
         ,
         {
             name: '_id',
-            label: 'Action',
+            label: 'Comments',
             options: {
                 sort: false,
                 filter: false,

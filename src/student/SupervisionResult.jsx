@@ -24,7 +24,6 @@ function SupervisionResult() {
     let [supervisor, setsupervisor] = useState();
     let [pdf, setpdf] = useState(null);
     let navigate = useNavigate();
-
     let [comment, setcomment] = useState(null);
 
     const getuserbyid = async (id) => {
@@ -77,15 +76,26 @@ function SupervisionResult() {
                         {status == 'approved' &&
                             <>
                                 <p>Congrates {user.name}, {supervisor?.name} has accepted your proposal.</p>
-                                <p>Click confirm to select them as your supervisor</p>
 
-                                <Button style={{ marginTop: 10 }} onClick={selectsupervisor}>Confirm</Button>
+                                {
+                                    user.supervisor != null &&
+                                    <>
+                                        <p>But you have already selected supervisor!</p>
+                                    </>
+                                }
+                                {
+                                    user.supervisor == null &&
+                                    <>
+                                        <p>Click confirm to select them as your supervisor</p>
+                                        <Button style={{ marginTop: 10 }} onClick={selectsupervisor}>Confirm</Button>
+                                    </>
+                                }
+
                             </>
                         }
                         {status == 'Pending' &&
                             <>
                                 <p>Dear {user.name}, your proposal is pending.</p>
-
                                 <Button style={{ marginTop: 10 }} onClick={() => navigate('/proposal')}>Go back</Button>
                             </>
                         }

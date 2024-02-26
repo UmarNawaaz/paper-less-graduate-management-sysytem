@@ -69,8 +69,8 @@ export const DASHBOARD_SIDEBAR_LINKS_TEACHER = [
         icon: <HiOutlineUsers />
     },
     {
-        key: 'papers',
-        label: 'Papers',
+        key: 'Documents',
+        label: 'Documents',
         path: '/Viewpapers',
         icon: <HiOutlineUsers />
     },

@@ -9,6 +9,7 @@ import axios from 'axios'
 import UserProfileDashboard from '../components/Profile/UserProfileDashBoard'
 import Progress from '../components/Dashboard/Progress'
 import { Typography } from '@mui/material'
+import { Box, Card, CardContent, Divider, Grid, List, ListItem, Avatar } from '@mui/material'
 
 export default function Mycommetti() {
     const { user, setUser } = useContext(UserContext)
@@ -72,7 +73,34 @@ export default function Mycommetti() {
                                         {
                                             commetti?.members_name?.map((item) => {
                                                 return <div>
-                                                    {item.name}
+                                                    <Card
+                                                        variant="outlined"
+                                                        sx={{
+                                                            width: '100%',
+                                                            maxWidth: '300px',
+                                                            backgroundColor: '#fff',
+                                                            marginBottom: 1,
+                                                            borderRadius: '8px',
+                                                            cursor: 'pointer',
+                                                            border: '1px solid gray'
+                                                        }}
+
+                                                    >
+                                                        <CardContent>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
+                                                                <Avatar alt="User" src={"supervisor"} />
+                                                                <Typography
+                                                                    variant="body1"
+                                                                    sx={{ fontWeight: 'bold', marginLeft: '10px' }}
+                                                                >
+                                                                    {item.name}
+                                                                </Typography>
+                                                            </Box>
+                                                            <Typography variant="body2" sx={{ marginBottom: '10px' }}>
+                                                                {item.qualification}
+                                                            </Typography>
+                                                        </CardContent>
+                                                    </Card>
                                                 </div>
                                             })
                                         }

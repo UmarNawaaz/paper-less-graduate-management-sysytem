@@ -46,7 +46,7 @@ const CommentsSection = ({ pdf_id }) => {
 
             <Divider />
 
-            {user.role === 'Supervisor' || user.role=='CoordinateCommitte' || user.role=='DAC'? (
+            {user.role === 'Supervisor' || user.role == 'CoordinateCommitte' || user.role == 'DAC' ? (
                 <>
                     <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: '10px' }}>
                         Post
@@ -54,7 +54,7 @@ const CommentsSection = ({ pdf_id }) => {
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => Navigate('/view-comments')}
+                        onClick={() => Navigate(`/SeeCommentsOnDoc/${pdf_id}/supervisor`)}
                         style={{ marginTop: '10px', marginLeft: '10px' }}
                     >
                         View Comments

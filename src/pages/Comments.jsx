@@ -73,7 +73,7 @@ const CommentsPage = () => {
             return comment;
         }));
 
-        // console.log(new_data);
+        console.log(new_data);
         setComments(new_data);
         setupdated(true);
     }
@@ -165,19 +165,54 @@ const CommentsPage = () => {
                 <div className="flex flex-col flex-1">
                     <Header />
                     <div className="flex-1 p-4 min-h-0 overflow-auto">
-                        <TableHeading name={'Comments'} />
+
                         {loading ? (
                             // <div>i am loading</div>
                             <div>Add Loader</div>
                         ) : (
                             <>
                                 {comments.length > 0 ? (
-                                    <MUIDataTable
-                                        // title={'Users list'}
-                                        data={comments}
-                                        columns={columns}
-                                        options={options}
-                                    />
+                                    <>
+
+                                        {
+                                            comments.filter((item) => item.teacher_type == 'Supervisor').length > 0 &&
+                                            <>
+                                                <TableHeading name={'Supervisor Comments'} />
+                                                <MUIDataTable
+                                                    // title={'Users list'}
+                                                    data={comments.filter((item) => item.teacher_type == 'Supervisor')}
+                                                    columns={columns}
+                                                    options={options}
+                                                />
+                                            </>
+                                        }
+                                        {
+                                            comments.filter((item) => item.teacher_type == 'CoordinateCommitte').length > 0 &&
+                                            <>
+                                                <TableHeading name={'Commetti Comments'} />
+                                                <MUIDataTable
+                                                    // title={'Users list'}
+                                                    data={comments.filter((item) => item.teacher_type == 'CoordinateCommitte')}
+                                                    columns={columns}
+                                                    options={options}
+                                                />
+                                            </>
+                                        }
+                                        {
+                                            comments.filter((item) => item.teacher_type == 'DAC').length > 0 &&
+                                            <>
+                                                <TableHeading name={'DAC Comments'} />
+                                                <MUIDataTable
+                                                    // title={'Users list'}
+                                                    data={comments.filter((item) => item.teacher_type == 'DAC')}
+                                                    columns={columns}
+                                                    options={options}
+                                                />
+                                            </>
+                                        }
+
+                                    </>
+
                                 ) : (
                                     <MUIDataTable
                                         // title={'Users list'}

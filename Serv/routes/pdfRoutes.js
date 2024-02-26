@@ -292,4 +292,15 @@ router.post('/delete_pdf', async (req, res) => {
   }
 
 })
+
+
+router.post("/upload_pdf", upload.single("pdfFile"), async (req, res) => {
+  try {
+    res.json(req.file.filename);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;

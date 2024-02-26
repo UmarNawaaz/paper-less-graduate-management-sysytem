@@ -89,176 +89,204 @@ export default function DashboardStatsGrid() {
             <div className="flex gap-4">
                 {role === 'Supervisor' &&
                     <>
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-sky-500">
-                                <PiStudentFill className="text-2xl text-white" />
-                            </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">My Supervision</span>
-                                <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">{counts?.mystudentscount}</span>
-                                </div>
-                            </div>
-                        </BoxWrapper>
+                        <div className='col-12 flex-wrap d-flex justify-content-between'>
+                            <div className='col-12 col-md-6 col-lg-3 '>
 
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
-                                <MdOutlinePendingActions className="text-2xl text-white" />
+                                <BoxWrapper >
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-sky-500">
+                                        <PiStudentFill className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">My Supervision</span>
+                                        <div className="flex items-center">
+                                            <span className="text-sm text-gray-400">{counts?.mystudentscount}</span>
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
                             </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Modified Request</span>
-                                <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">{counts?.modified_students}</span>
-                                </div>
+                            <div className='col-12 col-md-6 col-lg-3 '>
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
+                                        <MdOutlinePendingActions className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">Modified Request</span>
+                                        <div className="flex items-center">
+                                            <span className="text-sm text-gray-400">{counts?.modified_students}</span>
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
                             </div>
-                        </BoxWrapper>
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
-                                <MdOutlinePendingActions className="text-2xl text-white" />
+                            <div className='col-12 col-md-6 col-lg-3 '>
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
+                                        <MdOutlinePendingActions className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">Pending Request</span>
+                                        <div className="flex items-center">
+                                            <span className="text-sm text-gray-400">{counts?.pending_students}</span>
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
                             </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Pending Request</span>
-                                <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">{counts?.pending_students}</span>
-                                </div>
+                            <div className='col-12 col-md-6 col-lg-3 '>
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-yellow-400">
+                                        <IoPeople className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">Total Request Handled</span>
+                                        <div className="flex items-center">
+                                            <span className="text-sm text-gray-400">{counts?.pending_students + counts?.approved_students + counts?.rejected_students + counts?.tomodify_students + counts?.modified_students}</span>
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
                             </div>
-                        </BoxWrapper>
-
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-yellow-400">
-                                <IoPeople className="text-2xl text-white" />
-                            </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Total Request Handled</span>
-                                <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">{counts?.pending_students + counts?.approved_students + counts?.rejected_students + counts?.tomodify_students + counts?.modified_students}</span>
-                                </div>
-                            </div>
-                        </BoxWrapper>
+                        </div>
                     </>
                 }
 
                 {role == null &&
                     <>
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-sky-500">
-                                <FaClipboardCheck className="text-2xl text-white" />
+                        <div className='col-12 flex-wrap d-flex justify-content-between'>
+                            <div className='col-12 col-md-6 col-lg-3 '>
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-sky-500">
+                                        <FaClipboardCheck className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">Proposal Status</span>
+                                        <div className="flex items-center">
+                                            {user?.proposal_status ? (
+                                                <span className="text-sm text-green-500">{user?.proposal_status}</span>
+                                            ) : (
+                                                <span className="text-sm text-red-500">-</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
                             </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Proposal Status</span>
-                                <div className="flex items-center">
-                                    {user?.proposal_status ? (
-                                        <span className="text-sm text-green-500">{user?.proposal_status}</span>
-                                    ) : (
-                                        <span className="text-sm text-red-500">-</span>
-                                    )}
-                                </div>
+                            <div className='col-12 col-md-6 col-lg-3 '>
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
+                                        <GrCheckboxSelected className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">Supervisor Selected</span>
+                                        <div className="flex items-center">
+                                            {user?.supervisor ? (
+                                                <span className="text-sm text-green-500">YES</span>
+                                            ) : (
+                                                <span className="text-sm text-red-500">NO</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
                             </div>
-                        </BoxWrapper>
-
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
-                                <GrCheckboxSelected className="text-2xl text-white" />
+                            <div className='col-12 col-md-6 col-lg-3 '>
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-yellow-400">
+                                        <PiChalkboardTeacherFill className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">Supervisor Name</span>
+                                        <div className="flex items-center">
+                                            {user?.supervisor ? (
+                                                <span className="text-sm text-green-500">{superVisor?.name}</span>
+                                            ) : (
+                                                <span className="text-sm text-gray-300">-</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
                             </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Supervisor Selected</span>
-                                <div className="flex items-center">
-                                    {user?.supervisor ? (
-                                        <span className="text-sm text-green-500">YES</span>
-                                    ) : (
-                                        <span className="text-sm text-red-500">NO</span>
-                                    )}
-                                </div>
-                            </div>
-                        </BoxWrapper>
-
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-yellow-400">
-                                <PiChalkboardTeacherFill className="text-2xl text-white" />
-                            </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Supervisor Name</span>
-                                <div className="flex items-center">
-                                    {user?.supervisor ? (
-                                        <span className="text-sm text-green-500">{superVisor?.name}</span>
-                                    ) : (
-                                        <span className="text-sm text-gray-300">-</span>
-                                    )}
-                                </div>
-                            </div>
-                        </BoxWrapper>
+                        </div>
                     </>
                 }
                 {
                     role == 'CoordinateCommitte' &&
                     <>
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-sky-500">
-                                <PiStudentFill className="text-2xl text-white" />
+                        <div className='col-12 flex-wrap d-flex justify-content-between'>
+                            <div className='col-12 col-md-6 col-lg-3 '>
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-sky-500">
+                                        <PiStudentFill className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">To modify</span>
+                                        <div className="flex items-center">
+                                            <span className="text-sm text-gray-400">{counts?.tomodify_students}</span>
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
                             </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">To modify</span>
-                                <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">{counts?.tomodify_students}</span>
-                                </div>
-                            </div>
-                        </BoxWrapper>
+                            <div className='col-12 col-md-6 col-lg-3 '>
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
+                                        <MdOutlinePendingActions className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">Modified Request</span>
+                                        <div className="flex items-center">
+                                            <span className="text-sm text-gray-400">{counts?.modified_students}</span>
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
 
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
-                                <MdOutlinePendingActions className="text-2xl text-white" />
                             </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Modified Request</span>
-                                <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">{counts?.modified_students}</span>
-                                </div>
-                            </div>
-                        </BoxWrapper>
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
-                                <MdOutlinePendingActions className="text-2xl text-white" />
-                            </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Pending Request</span>
-                                <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">{counts?.pending_students}</span>
-                                </div>
-                            </div>
-                        </BoxWrapper>
+                            <div className='col-12 col-md-6 col-lg-3 '>
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
+                                        <MdOutlinePendingActions className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">Pending Request</span>
+                                        <div className="flex items-center">
+                                            <span className="text-sm text-gray-400">{counts?.pending_students}</span>
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
 
-                        <BoxWrapper>
-                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-yellow-400">
-                                <IoPeople className="text-2xl text-white" />
                             </div>
-                            <div className="pl-4">
-                                <span className="text-sm text-gray-500 font-light">Total Request Handled</span>
-                                <div className="flex items-center">
-                                    <span className="text-sm text-gray-400">{counts?.pending_students + counts?.approved_students + counts?.rejected_students + counts?.tomodify_students + counts?.modified_students}</span>
-                                </div>
+                            <div className='col-12 col-md-6 col-lg-3 '>
+
+                                <BoxWrapper>
+                                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-yellow-400">
+                                        <IoPeople className="text-2xl text-white" />
+                                    </div>
+                                    <div className="pl-4">
+                                        <span className="text-sm text-gray-500 font-light">Total Request Handled</span>
+                                        <div className="flex items-center">
+                                            <span className="text-sm text-gray-400">{counts?.pending_students + counts?.approved_students + counts?.rejected_students + counts?.tomodify_students + counts?.modified_students}</span>
+                                        </div>
+                                    </div>
+                                </BoxWrapper>
                             </div>
-                        </BoxWrapper>
+                        </div>
                     </>
                 }
-            </div>
-            
-            {pdf?.feedback ? (
-                <BoxWrapper>
-                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-green-600">
-                        <GrCheckboxSelected className="text-2xl text-white" />
-                    </div>
-                    <div className="pl-4">
-                        <span className="text-sm text-gray font-light">Submission Feedback</span>
-                        <div className="flex items-center">
-                            {pdf.feedback ? (
-                                <span className="text-sm gray">{pdf.feedback.text}</span>
-                            ) : (
-                                <span className="text-sm text-red-500">-</span>
-                            )}
+            </div >
+
+            {
+                pdf?.feedback ? (
+                    <BoxWrapper>
+                        <div className="rounded-full h-12 w-12 flex items-center justify-center bg-green-600">
+                            <GrCheckboxSelected className="text-2xl text-white" />
                         </div>
-                    </div>
-                </BoxWrapper>
-            ) : null}
+                        <div className="pl-4">
+                            <span className="text-sm text-gray font-light">Submission Feedback</span>
+                            <div className="flex items-center">
+                                {pdf.feedback ? (
+                                    <span className="text-sm gray">{pdf.feedback.text}</span>
+                                ) : (
+                                    <span className="text-sm text-red-500">-</span>
+                                )}
+                            </div>
+                        </div>
+                    </BoxWrapper >
+                ) : null
+            }
         </>
     )
 }

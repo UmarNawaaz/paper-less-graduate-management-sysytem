@@ -12,58 +12,65 @@ export default function Progress() {
     const { user } = useContext(UserContext)
 
     const role = user?.role
-
-
     return (
         <div className="flex gap-4">
             <>
-                <BoxWrapper>
-                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
-                        <SiGoogleclassroom className="text-2xl text-white" />
-                    </div>
-                    <div className="pl-4">
-                        <span className="text-sm text-gray-500 font-light">Committee Acceptance</span>
-                        <div className="flex items-center">
-                            {
-                                user?.commetti_acceptence == 'accepted' ?
-                                    <span className="text-sm text-green-500">Accepted</span> :
-                                    <span className="text-sm text-gray-500">Pending</span>
-                            }
+                <div className='col-12 flex-wrap d-flex justify-content-between'>
+                    <div className='col-12 col-md-6 col-lg-3 '>
+                        <BoxWrapper>
+                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-orange-600">
+                                <SiGoogleclassroom className="text-2xl text-white" />
+                            </div>
+                            <div className="pl-4">
+                                <span className="text-sm text-gray-500 font-light">Committee Acceptance</span>
+                                <div className="flex items-center">
+                                    {
+                                        user?.commetti_acceptence == 'accepted' ?
+                                            <span className="text-sm text-green-500">Accepted</span> :
+                                            <span className="text-sm text-gray-500">Pending</span>
+                                    }
 
-                        </div>
+                                </div>
+                            </div>
+                        </BoxWrapper>
                     </div>
-                </BoxWrapper>
+                    <div className='col-12 col-md-6 col-lg-3 '>
+                        <BoxWrapper>
+                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-green-400">
+                                <FaClipboardCheck className="text-2xl text-white" />
+                            </div>
+                            <div className="pl-4">
+                                <span className="text-sm text-gray-500 font-light">DAC Members Acceptance</span>
+                                <div className="flex items-center">
+                                    {
+                                        user?.dac_acceptence == 'accepted' ?
+                                            <span className="text-sm text-green-500">Accepted</span> :
+                                            <span className="text-sm text-gray-500">Pending</span>
+                                    }
+                                </div>
+                            </div>
+                        </BoxWrapper>
 
-                <BoxWrapper>
-                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-green-400">
-                        <FaClipboardCheck className="text-2xl text-white" />
                     </div>
-                    <div className="pl-4">
-                        <span className="text-sm text-gray-500 font-light">DAC Members Acceptance</span>
-                        <div className="flex items-center">
-                            {
-                                user?.dac_acceptence == 'accepted' ?
-                                    <span className="text-sm text-green-500">Accepted</span> :
-                                    <span className="text-sm text-gray-500">Pending</span>
-                            }
-                        </div>
+                    <div className='col-12 col-md-6 col-lg-3 '>
+                        <BoxWrapper>
+                            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-yellow-400">
+                                <PiChalkboardTeacherFill className="text-2xl text-white" />
+                            </div>
+                            <div className="pl-4">
+                                <span className="text-sm text-gray-500 font-light">Dean Acceptance</span>
+                                <div className="flex items-center">
+                                    {
+                                        user?.deen_acceptence == 'accepted' ?
+                                            <span className="text-sm text-green-500">Accepted</span> :
+                                            <span className="text-sm text-gray-500">Pending</span>
+                                    }
+                                </div>
+                            </div>
+                        </BoxWrapper>
+
                     </div>
-                </BoxWrapper>
-                <BoxWrapper>
-                    <div className="rounded-full h-12 w-12 flex items-center justify-center bg-yellow-400">
-                        <PiChalkboardTeacherFill className="text-2xl text-white" />
-                    </div>
-                    <div className="pl-4">
-                        <span className="text-sm text-gray-500 font-light">Dean Acceptance</span>
-                        <div className="flex items-center">
-                            {
-                                user?.deen_acceptence == 'accepted' ?
-                                    <span className="text-sm text-green-500">Accepted</span> :
-                                    <span className="text-sm text-gray-500">Pending</span>
-                            }
-                        </div>
-                    </div>
-                </BoxWrapper>
+                </div>
             </>
         </div>
     )

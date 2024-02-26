@@ -46,7 +46,7 @@ export default function Sidebar() {
     // console.log(user);
 
     return (
-        <div className="bg-neutral-900 w-60 p-3 flex flex-col overflow-y-auto">
+        <div style={{minWidth:'200px'}} className="bg-neutral-900 w-60 p-3 flex flex-col overflow-y-auto">
             <div className="flex items-center gap-2 px-1 py-3">
                 <span className="text-neutral-200 text-2xl">PGMS</span>
             </div>

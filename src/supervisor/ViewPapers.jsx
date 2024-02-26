@@ -23,7 +23,7 @@ function ViewPapers() {
             'user_type': 'teacher',
             '_id': user?._id
         });
-        console.log(response.data);
+        // console.log(response.data);
         setpapers(response.data);
         setpapersgot(true);
     }

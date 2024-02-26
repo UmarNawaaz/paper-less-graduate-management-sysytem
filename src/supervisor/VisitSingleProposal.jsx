@@ -22,6 +22,8 @@ import Select from '@mui/material/Select'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
+import { Typography } from '@mui/material'
+
 
 function VisitSingleProposal() {
 
@@ -67,7 +69,6 @@ function VisitSingleProposal() {
         if (user?.role == 'CoordinateCommitte') {
             get_all_dacs();
         }
-
     }, [viewPdf, pdfid])
 
     let [modify, setmodify] = useState(false);
@@ -80,14 +81,36 @@ function VisitSingleProposal() {
                     modify_paper(text);
                 }
                 else {
-                    let response = await axios.post('http://localhost:5000/modify_paper', {
-                        pdf_id: pdf_id,
-                        'teacher_id': user._id,
-                        'reason': text
-                    });
-                    toast.success(response.data.result)
-                    setmodify(false);
-                    navigate('/view/proposals/supervisor')
+                    if (updatedpdf != null) {
+                        const formData = new FormData();
+                        formData.append('pdfFile', updatedpdf);
+
+                        await axios.post('http://localhost:5000/api/upload_pdf', formData).then(async (response) => {
+                            console.log(response.data);
+
+                            let resp = await axios.post('http://localhost:5000/modify_paper', {
+                                pdf_id: pdf_id,
+                                'teacher_id': user._id,
+                                'reason': text,
+                                'updated_pdf_name': response.data
+                            });
+                            toast.success(resp.data.result)
+                            setmodify(false);
+                            navigate('/view/proposals/supervisor')
+                        })
+
+                    }
+                    else {
+                        let response = await axios.post('http://localhost:5000/modify_paper', {
+                            pdf_id: pdf_id,
+                            'teacher_id': user._id,
+                            'reason': text
+                        });
+                        toast.success(response.data.result)
+                        setmodify(false);
+                        navigate('/view/proposals/supervisor')
+                    }
+
                 }
 
                 // Handle success, update state or perform additional actions
@@ -192,12 +215,34 @@ function VisitSingleProposal() {
     }
 
     let modify_paper = async (reason) => {
-        let response = await axios.post('http://localhost:5000/modify_paper', {
-            pdf_id: pdf_id,
-            'teacher_id': user._id,
-            'reason': reason
-        });
-        navigate('/Viewpapers')
+        
+        if (updatedpdf != null) {
+            const formData = new FormData();
+            formData.append('pdfFile', updatedpdf);
+
+            await axios.post('http://localhost:5000/api/upload_pdf', formData).then(async (response) => {
+                console.log(response.data);
+
+                let resp = await axios.post('http://localhost:5000/modify_paper', {
+                    pdf_id: pdf_id,
+                    'teacher_id': user._id,
+                    'reason': reason,
+                    'updated_pdf_name': response.data
+                });
+                toast.success(resp.data.result)
+                setmodify(false);
+                navigate('/Viewpapers')
+            })
+
+        }
+        else {
+            let response = await axios.post('http://localhost:5000/modify_paper', {
+                pdf_id: pdf_id,
+                'teacher_id': user._id,
+                'reason': reason
+            });
+            navigate('/Viewpapers')
+        }
     }
 
     let forwardtocommetti = async () => {
@@ -235,6 +280,8 @@ function VisitSingleProposal() {
         }
     }
 
+    let [updatedpdf, setupdatedpdf] = useState(null);
+
     return (
         <>
             <div className="bg-neutral-100 h-screen w-screen overflow-hidden flex flex-row">
@@ -242,18 +289,12 @@ function VisitSingleProposal() {
                 <div className="flex flex-col flex-1">
                     <Header />
                     <div className="flex-1 p-4 min-h-0 overflow-auto">
-                        <Grid container spacing={2}>
-                            <Grid item xs={8}>
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        marginTop: user.pdf ? '30px' : '0'
-                                    }}
-                                >
+                        <div className='col-12 d-flex flex-wrap'>
 
-                                    <div style={{ width: '80%', maxWidth: '1000px', height: 'auto' }}>
+                            <div className='col-12 col-lg-8'>
+                                <div >
+
+                                    <div >
                                         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                                             {viewPdf ? (
                                                 <Viewer fileUrl={viewPdf} plugins={[newPlugin]} />
@@ -275,12 +316,7 @@ function VisitSingleProposal() {
                                         </Worker>
                                     </div>
                                     <div
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            marginTop: '30px',
-                                            marginBottom: '60px'
-                                        }}
+                                        className='d-flex flex-wrap justify-content-center my-2'
                                     >
                                         <button
                                             type="button"
@@ -401,15 +437,16 @@ function VisitSingleProposal() {
                                     }
                                 </div>
                                 <div>
-                                    <FeedbackModal isOpen={isModalOpen} onClose={closeModal} onSubmit={handleFeedbackSubmit} />
+                                    <FeedbackModal isOpen={isModalOpen} onClose={closeModal} onSubmit={handleFeedbackSubmit} setupdatedpdf={setupdatedpdf} />
                                 </div>
-                            </Grid>
-                            <Grid item xs={4}>
+                            </div>
+
+                            <div className='col-12 col-lg-4'>
                                 <BoxWrapper>
                                     <CommentsSection pdf_id={pdfid} />
                                 </BoxWrapper>
-                            </Grid>
-                        </Grid>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

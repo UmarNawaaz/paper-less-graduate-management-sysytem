@@ -73,7 +73,7 @@ const CommentsPage = () => {
             return comment;
         }));
 
-        console.log(new_data);
+        // console.log(new_data);
         setComments(new_data);
         setupdated(true);
     }

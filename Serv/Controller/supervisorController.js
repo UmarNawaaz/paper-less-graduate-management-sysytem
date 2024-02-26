@@ -275,13 +275,26 @@ exports.approve_paper = async (req, res) => {
 exports.modify_paper = async (req, res) => {
 
     try {
-        await pdf.findOneAndUpdate({
-            '_id': req.body.pdf_id,
-            'teacher_id': req.body.teacher_id
-        }, {
-            'status': 'modify',
-            'reason': req.body.reason
-        })
+        if (req.body.updated_pdf_name != null) {
+            await pdf.findOneAndUpdate({
+                '_id': req.body.pdf_id,
+                'teacher_id': req.body.teacher_id
+            }, {
+                'status': 'modify',
+                'reason': req.body.reason,
+                'pdfName': req.body.updated_pdf_name
+            });
+        }
+        else {
+            await pdf.findOneAndUpdate({
+                '_id': req.body.pdf_id,
+                'teacher_id': req.body.teacher_id
+            }, {
+                'status': 'modify',
+                'reason': req.body.reason
+            })
+        }
+
 
         res.json({ 'result': "Submitted" });
     } catch (err) {

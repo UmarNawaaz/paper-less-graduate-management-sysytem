@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 import TextareaAutosize from '@mui/material/TextareaAutosize'
 import Button from '@mui/material/Button'
 
-const FeedbackModal = ({ isOpen, onClose, onSubmit }) => {
+const FeedbackModal = ({ isOpen, onClose, onSubmit, setupdatedpdf }) => {
     const [feedback, setFeedback] = useState('')
 
     const handleFeedbackChange = (e) => {
@@ -18,6 +18,18 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }) => {
         setFeedback('')
         onClose()
     }
+
+    let [pdf, setpdf] = useState(null);
+
+    const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0]
+        if (selectedFile && selectedFile.type === 'application/pdf') {
+            setupdatedpdf(selectedFile)
+            setpdf(selectedFile);
+            setfileselected(true);
+        }
+    }
+    let [fileselected, setfileselected] = useState(false);
 
     return (
         <Modal open={isOpen} onClose={onClose}>
@@ -56,6 +68,28 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }) => {
                             resize: 'vertical' // Allow vertical resizing
                         }}
                     />
+                    <div className='mb-2 d-flex justify-content-center align-items-center'>
+                        <label htmlFor="pdfFileInput" className="custom-file-upload">
+                            <input
+                                type="file"
+                                id="pdfFileInput"
+                                style={{ display: 'none' }}
+                                onChange={handleFileChange}
+                            />
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => document.getElementById('pdfFileInput').click()}
+                                sx={{ width: '80', borderRadius: '4px' }}
+                            >Upload updated pdf?</Button>
+
+                        </label>
+                        {
+                            fileselected &&
+                            <p className='ms-2'>{pdf.name}</p>
+
+                        }
+                    </div>
                     <Button
                         variant="contained"
                         color="primary"

@@ -135,32 +135,7 @@ const ViewPDF = (pdfName, { update }) => {
     const handleSubmission = async () => {
 
         if (pdfFile) {
-            // const result = await uploadStudentPDF(uploadPDFName, user._id, superVisor)
 
-            // if (result.success) {
-            //     // toast.success('File Uploaded')
-
-            //     if (user._id && superVisor) {
-            //         // Select a teacher for the student
-            //         const result = await selectTeacherForStudent(user._id, superVisor)
-
-            //         if (result.success) {
-            //             toast.success('Supervisor Selected')
-            //             fetchUser()
-            //         } else {
-            //             console.error('Request Failed', result.error)
-            //         }
-
-            //     } else {
-            //         // Handle the case where user ID or supervisor is missing
-            //         toast.error('User ID or Supervisor information missing')
-            //     }
-            //     fetchUser()
-
-            // } else {
-            //     console.error('Failed to upload PDF:', result.error)
-            //     toast.error('File Upload Failed')
-            // }
             const formData = new FormData()
             formData.append('pdfFile', pdfref.current.files[0])
             formData.append('studentId', user._id)

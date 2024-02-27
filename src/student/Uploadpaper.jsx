@@ -28,12 +28,15 @@ function Uploadpaper() {
 
     }
 
+    let [pdfname, setpdfname] = useState('');
+
     let submitpaper = async () => {
         const formData = new FormData()
         formData.append('pdfFile', pdfref.current.files[0])
         formData.append('studentId', user._id)
         formData.append('supervisor_id', user.supervisor)
         formData.append('pdf_type', 'paper');
+        formData.append('document_name', pdfname)
 
         try {
             const response = await axios.post('http://localhost:5000/api/Student-pdf', formData, {
@@ -78,7 +81,8 @@ function Uploadpaper() {
                                 cursor: 'pointer',
                                 border: '1px solid black',
                                 borderRadius: '10px',
-                                marginTop: '10px'
+                                marginTop: '10px',
+                                color: 'black'
                             }}
                             onClick={() => document.getElementById('pdfFileInput').click()}
                         >
@@ -88,22 +92,37 @@ function Uploadpaper() {
                     {
                         fileselected &&
                         <>
-                            <p style={{ fontStyle: 'italic', color: 'gray' }}>Selected file : {pdfref.current.files[0].name}</p>
-                            <button
-                                type="button"
-                                className="btn btn-success"
-                                style={{
-                                    marginRight: '10px',
-                                    padding: '8px 16px',
-                                    cursor: 'pointer',
-                                    border: '1px solid black',
-                                    borderRadius: '10px',
-                                    marginTop: '10px'
-                                }}
-                                onClick={() => { submitpaper() }}
-                            >
-                                Submit
-                            </button>
+                            <div className='d-flex flex-column col-12 '>
+
+                                <div className='col-6  my-2'>
+
+                                    <p className='col-12 mb-2'>Give Your PDF name : </p>
+                                    <div className=' col-12' >
+                                        <input value={pdfname} onChange={(e) => setpdfname(e.target.value)} type='text' className='form-control' />
+                                    </div>
+
+                                </div>
+
+                                <div className='col-4'>
+                                    <p style={{ fontStyle: 'italic', color: 'gray' }}>Selected file : {pdfref.current.files[0].name}</p>
+                                    <button
+                                        type="button"
+                                        className="btn btn-success"
+                                        style={{
+                                            marginRight: '10px',
+                                            padding: '8px 16px',
+                                            cursor: 'pointer',
+                                            border: '1px solid black',
+                                            borderRadius: '10px',
+                                            marginTop: '10px',
+                                            color: 'black'
+                                        }}
+                                        onClick={() => { submitpaper() }}
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
 
                         </>
                     }

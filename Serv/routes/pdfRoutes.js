@@ -54,13 +54,14 @@ router.post("/Student-pdf", upload.single("pdfFile"), async (req, res) => {
       return res.status(400).json({ error: "Student ID is required" });
     }
 
-    console.log(req.body);
+    // console.log(req.body);
 
     const pdf = new Pdf({
       pdfName: req.file.filename,
       pdf_type: req.body.pdf_type ? req.body.pdf_type : 'proposal',
       student_id: studentId,
-      teacher_id: req.body.supervisor_id
+      teacher_id: req.body.supervisor_id,
+      document_name: req.body.document_name
     });
 
     if (req.body.pdf_type != 'paper') {

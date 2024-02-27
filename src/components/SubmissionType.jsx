@@ -18,7 +18,7 @@ export default function SubmissionTypePicker({ onSelectSubmissionType, onSuperVi
             .get('http://localhost:5000/getTeacherData')
             .then((response) => {
                 // console.log(response.data)
-                const filteredTeachers = response.data.filter((teacher) => teacher.department === user.department)
+                const filteredTeachers = response.data.filter((teacher) => teacher.department === user.department && teacher.role == "Supervisor")
                 // console.log(filteredTeachers);
                 setTeachers(filteredTeachers)
             })

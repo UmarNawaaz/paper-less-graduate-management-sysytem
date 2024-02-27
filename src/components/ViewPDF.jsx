@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect,useRef } from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { Viewer, Worker } from '@react-pdf-viewer/core'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import '@react-pdf-viewer/core/lib/styles/index.css'
@@ -136,27 +136,36 @@ const ViewPDF = (pdfName, { update }) => {
 
         if (pdfFile) {
 
-            const formData = new FormData()
-            formData.append('pdfFile', pdfref.current.files[0])
-            formData.append('studentId', user._id)
-            formData.append('supervisor_id',superVisor)
-            formData.append('pdf_type', 'proposal');
+            if (pdfname.trim() != '') {
 
-            try {
-                const response = await axios.post('http://localhost:5000/api/Student-pdf', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
+                const formData = new FormData()
+                formData.append('pdfFile', pdfref.current.files[0])
+                formData.append('studentId', user._id)
+                formData.append('supervisor_id', superVisor)
+                formData.append('pdf_type', 'proposal');
+                formData.append('document_name', pdfname)
+
+                try {
+                    const response = await axios.post('http://localhost:5000/api/Student-pdf', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    if (response.status === 200) {
+                        // console.log(response.data)
+                        navigate('/proposal')
+                    } else {
+                        console.log(response.data)
                     }
-                })
-                if (response.status === 200) {
-                    console.log(response.data)
-                    navigate('/proposal')
-                } else {
-                    console.log(response.data)
+                } catch (error) {
+                    return { success: false, error: error.message }
                 }
-            } catch (error) {
-                return { success: false, error: error.message }
             }
+            else {
+                alert('Give Your Pdf name!')
+            }
+
+
 
 
         } else {
@@ -197,6 +206,8 @@ const ViewPDF = (pdfName, { update }) => {
 
     const newPlugin = defaultLayoutPlugin()
 
+    let [pdfname, setpdfname] = useState('');
+
     return (
         <>
             {user.role !== 'Supervisor' ? (
@@ -206,16 +217,11 @@ const ViewPDF = (pdfName, { update }) => {
                     onSuperViosrSelect={handleSuperVisorType}
                 />
             ) : (
-                <div style={{ marginTop: '40px' }} />
+                <div style={{ marginTop: '10px' }} />
             )}
 
             <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    marginTop: user.pdf ? '30px' : '0'
-                }}
+                className='d-flex flex-column container justify-content-center align-items-center'
             >
                 {(user.role !== 'Supervisor' && !user.pdf) || updatePDf === 'Update' ? (
                     <>
@@ -280,7 +286,8 @@ const ViewPDF = (pdfName, { update }) => {
                     </>
                 ) : null}
 
-                <div style={{ width: '80%', maxWidth: '1000px', height: '1200px' }}>
+                <div className='d-flex justify-content-center  overflow-scroll col-12 col-md-8'>
+
                     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                         {viewPdf ? (
                             <Viewer fileUrl={viewPdf} plugins={[newPlugin]} />
@@ -301,24 +308,32 @@ const ViewPDF = (pdfName, { update }) => {
                         )}
                     </Worker>
                 </div>
+
                 {user.role !== 'Supervisor' ? (
                     !user.pdf || updatePDf === 'Update' ? (
-                        <button
-                            type="submit"
-                            className="btn btn-primary"
-                            onClick={handleSubmission}
-                            style={{
-                                padding: '8px 16px',
-                                cursor: 'pointer',
-                                backgroundColor: '#3498db',
-                                border: '1px solid #2980b9',
-                                borderRadius: '5px',
-                                color: '#ffffff',
-                                margin: '30px 0 60px'
-                            }}
-                        >
-                            Submit PDF
-                        </button>
+
+                        <div className='d-flex p-2 mt-2 col-12 align-items-center'>
+
+                            <p className='col-2'>Give Your PDF name : </p>
+                            <div className=' col-3' >
+                                <input value={pdfname} onChange={(e) => setpdfname(e.target.value)} type='text' className='form-control' />
+                            </div>
+                            <button
+                                type="submit"
+                                className="btn btn-primary ms-2 col-2"
+                                onClick={handleSubmission}
+                                style={{
+                                    cursor: 'pointer',
+                                    backgroundColor: '#3498db',
+                                    border: '1px solid #2980b9',
+                                    borderRadius: '5px',
+                                    color: '#ffffff',
+                                }}
+                            >
+                                Submit PDF
+                            </button>
+                        </div>
+
                     ) : (
                         <button
                             type="submit"

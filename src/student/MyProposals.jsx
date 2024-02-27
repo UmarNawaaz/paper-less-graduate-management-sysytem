@@ -48,8 +48,13 @@ const MyProposal = () => {
             let teacher = await getuserbyid(proposal.teacher_id);
             proposal['teacher_name'] = teacher.name;
             proposal['teacher_id'] = teacher._id;
+            proposal['info'] = {
+                'status': proposal.status,
+                'forwarded_by': proposal.forwarded_by
+            }
             return proposal;
         }));
+        // console.log(_data);
         setproposals_data(_data);
     }
 
@@ -80,34 +85,81 @@ const MyProposal = () => {
     const columns = [
         {
             name: 'teacher_name',
-            label: 'Supervisor',
+            label: 'Teacher',
             options: {
                 sort: false,
                 filter: false
             }
         },
         {
-            name: 'status',
+            name: 'document_name',
+            label: 'PDF',
+            options: {
+                sort: false,
+                filter: false
+            }
+        },
+        {
+            name: 'info',
             label: 'Status',
             options: {
                 sort: false,
                 customBodyRender: (value) => {
-                    if (value == 'approved') {
+
+
+                    if (value?.status == 'approved') {
                         return (
-                            <p style={{ color: 'green' }}>{value}</p>
+                            <>
+                                {
+                                    value?.forwarded_by != null &&
+                                    <p style={{ fontSize: '12px', fontStyle: 'italic', color: "green" }}>forwarded by : {value.forwarded_by}</p>
+
+                                }
+                                <p style={{ color: 'green' }}>{value?.status}</p>
+                            </>
                         )
-                    } else if (value == 'rejected') {
+                    } else if (value?.status == 'rejected') {
                         return (
-                            <p style={{ color: 'red' }}>{value}</p>
+                            <>
+                                {
+                                    value?.forwarded_by != null &&
+                                    <p style={{ fontSize: '12px', fontStyle: 'italic', color: "green" }}>forwarded by : {value.forwarded_by}</p>
+
+                                }
+                                <p style={{ color: 'red' }}>{value?.status}</p>
+                            </>
                         )
-                    } else if (value == 'modify') {
+                    } else if (value?.status == 'modify') {
                         return (
-                            <p style={{ color: 'orange' }}>{value}</p>
+                            <>{
+                                value?.forwarded_by != null &&
+                                <p style={{ fontSize: '12px', fontStyle: 'italic', color: "green" }}>forwarded by : {value.forwarded_by}</p>
+
+                            }
+                                <p style={{ color: 'orange' }}>{value?.status}</p>
+                            </>
+                        )
+                    }
+                    else if (value?.status == 'modified') {
+                        return (
+                            <>{
+                                value?.forwarded_by != null &&
+                                <p style={{ fontSize: '12px', fontStyle: 'italic', color: "green" }}>forwarded by : {value.forwarded_by}</p>
+
+                            }
+                                <p style={{ color: 'orange' }}>{value?.status}</p>
+                            </>
                         )
                     }
                     else {
                         return (
-                            <p style={{ color: 'gray', fontStyle: 'italic' }}>{'Pending'}</p>
+                            <>{
+                                value?.forwarded_by != null &&
+                                <p style={{ fontSize: '12px', fontStyle: 'italic', color: "green" }}>forwarded by : {value.forwarded_by}</p>
+
+                            }
+                                <p style={{ color: 'gray', fontStyle: 'italic' }}>{'Pending'}</p>
+                            </>
                         )
                     }
                 }

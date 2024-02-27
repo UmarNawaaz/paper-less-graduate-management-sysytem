@@ -50,9 +50,15 @@ function Mypapers() {
         const _data = await Promise.all(papers?.map(async (paper, index) => {
             let teacher = await getuserbyid(paper.teacher_id);
             paper['teacher_name'] = teacher.name + " (" + teacher.role + ")";
+            paper['info'] = {
+                'status': paper.status,
+                'forwarded_by': paper.forwarded_by
+            }
             return paper;
         }));
+        // console.log(_data)
         setpapers(_data);
+        setupdated(true);
     }
 
     useEffect(() => {
@@ -91,33 +97,14 @@ function Mypapers() {
                 }
             }
         },
-        // {
-        //     name: 'status',
-        //     label: 'Status',
-        //     options: {
-        //         sort: false,
-        //         customBodyRender: (value) => {
-        //             if (value == 'approved') {
-        //                 return (
-        //                     <p style={{ color: 'green' }}>{value}</p>
-        //                 )
-        //             } else if (value == 'rejected') {
-        //                 return (
-        //                     <p style={{ color: 'red' }}>{value}</p>
-        //                 )
-        //             } else if (value == 'modify') {
-        //                 return (
-        //                     <p style={{ color: 'orange' }}>{value}</p>
-        //                 )
-        //             }
-        //             else {
-        //                 return (
-        //                     <p style={{ color: 'gray', fontStyle: 'italic' }}>{'Pending'}</p>
-        //                 )
-        //             }
-        //         }
-        //     }
-        // },
+        {
+            name: 'document_name',
+            label: 'PDF',
+            options: {
+                sort: false,
+                filter: false
+            }
+        },
         {
             name: 'teacher_name',
             label: 'Teacher',
@@ -133,10 +120,34 @@ function Mypapers() {
             }
         },
         {
-            name: 'status',
+            name: 'info',
             label: 'Status',
             options: {
-                sort: false
+                sort: false,
+                customBodyRender: (value, tableMeta) => {
+
+                    let isAvailable
+                    if (value) {
+                        isAvailable = 'YES'
+                    } else {
+                        isAvailable = 'NO'
+                    }
+                    if (isAvailable) {
+                        return (
+                            <Typography
+                                className="details-text"
+                                style={{ fontSize: '15px' }}
+                            >
+                                {
+                                    value?.forwarded_by != null &&
+                                    <p style={{ fontSize: '12px', fontStyle: 'italic', color: "green" }}>forwarded by : {value.forwarded_by}</p>
+
+                                }
+                                <p>{value?.status}</p>
+                            </Typography>
+                        )
+                    }
+                }
             }
         },
 

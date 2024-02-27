@@ -215,7 +215,7 @@ function VisitSingleProposal() {
     }
 
     let modify_paper = async (reason) => {
-        
+
         if (updatedpdf != null) {
             const formData = new FormData();
             formData.append('pdfFile', updatedpdf);
@@ -248,7 +248,8 @@ function VisitSingleProposal() {
     let forwardtocommetti = async () => {
 
         let response = await axios.post('/forward_to_commetti', {
-            'pdf_id': pdf_id
+            'pdf_id': pdf_id,
+            'supervisor_id': user?._id
         })
 
         if (response.status == 200) {
@@ -268,7 +269,8 @@ function VisitSingleProposal() {
         else {
             let response = await axios.post('/forward_to_dac', {
                 'pdf_id': pdf_id,
-                'dac_id': selecteddac
+                'dac_id': selecteddac,
+                'commetti_member_id':user?._id
             })
 
             if (response.status == 200) {

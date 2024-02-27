@@ -86,14 +86,58 @@ router.post('/forward_to_dac', async (req, res) => {
             '_id': req.body.dac_id
         })
 
+        //forwarded by teacher
+        let teacher_data = await teacherData.find({
+            '_id': req.body.commetti_member_id
+        })
+
         listofteaches[0].dac_members.map(async (item) => {
+
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            let randomName = '';
+            for (let i = 0; i < 15; i++) {
+                const randomIndex = Math.floor(Math.random() * alphabet.length);
+                randomName += alphabet[randomIndex];
+            }
+            // fs.copyFile(`files/${pdfdata[0].pdfName}`,`files/copiedfile.pdf`,())
+            const sourceFilePath = path.join(__dirname, '..', 'files', `${pdfdata[0].pdfName}`);
+            const destinationFilePath = path.join(__dirname, '..', 'files', randomName + '.pdf');
+
+            // Read the PDF file
+            fs.readFile(sourceFilePath, (err, data) => {
+                if (err) {
+                    console.error('Error reading file:', err);
+                    return;
+                }
+
+                // Write the PDF file with a new name
+                fs.writeFile(destinationFilePath, data, (err) => {
+                    if (err) {
+                        console.error('Error writing file:', err);
+                        return;
+                    }
+                    console.log('File copied successfully!');
+                });
+            });
+
+
             await new pdf({
-                'pdfName': pdfdata[0].pdfName,
+                'pdfName': randomName + '.pdf',
                 'status': 'Pending',
                 'student_id': pdfdata[0].student_id,
                 'teacher_id': item,
                 'pdf_type': pdfdata[0].pdf_type,
+                'document_name': pdfdata[0].document_name,
+                'forwarded_by': `${teacher_data[0].name} (${teacher_data[0].role})`
             }).save();
+
+            // await new pdf({
+            //     'pdfName': pdfdata[0].pdfName,
+            //     'status': 'Pending',
+            //     'student_id': pdfdata[0].student_id,
+            //     'teacher_id': item,
+            //     'pdf_type': pdfdata[0].pdf_type,
+            // }).save();
         })
 
         await studentData.findOneAndUpdate({

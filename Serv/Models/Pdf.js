@@ -5,7 +5,7 @@ const pdfSchema = new Schema({
   pdfName: String,
   status: {
     type: String,
-    enum: ["Approved", "Pending", "Modify", "Reject",'forward to deen'],
+    enum: ["Approved", "Pending", "Modify", "Reject", 'forward to deen'],
     default: "Pending",
   },
   student_id: {
@@ -23,6 +23,7 @@ const pdfSchema = new Schema({
   reason: {
     type: String
   },
+  forwarded_by: String,
   time: {
     text: String,
     timestamp: {
